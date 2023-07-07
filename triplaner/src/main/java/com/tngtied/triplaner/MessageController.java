@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -28,9 +29,11 @@ public class MessageController {
     }
 
     @PostMapping("/memo")
-    public Memo memopost(@RequestBody RequestMemo requestmemo){
+    public Memo postmemo(@RequestBody RequestMemo requestmemo){
         Memo memo_instace = new Memo();
         memo_instace.message = requestmemo.message;
+        memo_instace.createdate = new Date();
+        memo_instace.touchdate = new Date();
         repo.save(memo_instace);
         return(memo_instace);
     }
@@ -38,5 +41,14 @@ public class MessageController {
     @GetMapping("/memo/{id}")
     public Memo getMemo(@PathVariable int id){
         return (repo.findById(id).orElse(null));
+    }
+
+    @PostMapping("/memo/{id}")
+    public Memo touchmemo(@PathVariable int id, @RequestBody RequestMemo requestMemo){
+        Memo memo_instance = repo.findById(id).orElse(null);
+        memo_instance.touchdate = new Date();
+        memo_instance.message = requestMemo.message;
+        repo.save(memo_instance);
+        return (memo_instance);
     }
 }
