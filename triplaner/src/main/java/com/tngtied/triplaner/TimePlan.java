@@ -19,7 +19,7 @@ public class TimePlan {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name ="DAYPLAN_ID")
-    public DayPlan dayplan_instance;
+    public DayPlan parent_dayplan;
 
     class place{
         public double latitude;

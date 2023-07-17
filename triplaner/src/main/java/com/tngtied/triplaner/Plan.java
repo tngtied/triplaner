@@ -2,6 +2,7 @@ package com.tngtied.triplaner;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
+import lombok.Getter;
 
 import java.util.Date;
 import java.util.HashSet;
@@ -27,7 +28,7 @@ public class Plan {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)
     public Date EndDate;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "plan_instance")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent_plan")
     public Set<DayPlan> dayplan_list = new HashSet();
 
 }

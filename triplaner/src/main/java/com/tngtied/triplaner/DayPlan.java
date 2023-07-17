@@ -1,7 +1,6 @@
 package com.tngtied.triplaner;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -9,6 +8,9 @@ import java.util.Set;
 @Entity
 @Table(name = "DAYPLAN")
 public class DayPlan {
+    public DayPlan(Plan parent_plan) {
+        this.parent_plan = parent_plan;
+    }
 
     @Id
     @GeneratedValue
@@ -17,9 +19,8 @@ public class DayPlan {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="PLAN_ID")
-    public Plan plan_instance;
+    public Plan parent_plan;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy="dayplan_instance")
+    @OneToMany(fetch = FetchType.EAGER, mappedBy="parent_dayplan")
     public Set<TimePlan> timeplan_list= new HashSet();
-
 }
