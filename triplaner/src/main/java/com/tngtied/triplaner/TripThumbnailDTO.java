@@ -16,5 +16,5 @@ public class TripThumbnailDTO {
     public int id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)
-    public Date startdate, enddate;
+    public Date startDate, endDate;
 }

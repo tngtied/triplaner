@@ -1,9 +1,11 @@
 package com.tngtied.triplaner;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -22,13 +24,14 @@ public class Plan {
 
     @Column(name="START_DATE")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)
-    public Date StartDate;
+    public Date startDate;
 
     @Column(name="END_DATE")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)
-    public Date EndDate;
+    public Date endDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent_plan")
-    public Set<DayPlan> dayplan_list = new HashSet();
+    @JsonManagedReference
+    public ArrayList<DayPlan> dayplan_list = new ArrayList();
 
 }

@@ -27,8 +27,12 @@ class MapControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
     @MockBean
     public plan_repository plan_repo;
+    @Autowired
+    @MockBean
+    public dayplan_repository dayplan_repo;
     private static final String base_mapping = "/api/v1/trip";
 
     public String objectToJson(Object obj){
@@ -39,12 +43,12 @@ class MapControllerTest {
     }
 
     @Test
-    @DisplayName("plan-list post test")
+    @DisplayName("plan dto post test")
     void planListPostTest() throws Exception {
         TripThumbnailDTO dto1 = new TripThumbnailDTO();
         dto1.title = "kyungju";
-        dto1.startdate = new Date(2023,9,13);
-        dto1.enddate = new Date(2023, 8, 12);
+        dto1.startDate = new Date(2023,9,13);
+        dto1.endDate = new Date(2023, 8, 12);
 
         mockMvc.perform(post(base_mapping)
                 .content(objectToJson(dto1))
@@ -57,14 +61,7 @@ class MapControllerTest {
     @Test
     @DisplayName("plan-list get test")
     void planListGetTest() throws Exception {
-        Plan plan1 = plan_repo.findById(0).orElse(null);
-
-        for (int i =0; i<3; i++){
-            plan1.dayplan_list.add(new DayPlan(plan1));
-        }
-        plan_repo.save(plan1);
-
-        mockMvc.perform(get(base_mapping))
+        mockMvc.perform(get(base_mapping+"s"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

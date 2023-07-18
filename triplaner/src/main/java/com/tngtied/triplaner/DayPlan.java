@@ -1,5 +1,7 @@
 package com.tngtied.triplaner;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 
 import java.util.HashSet;
@@ -19,8 +21,10 @@ public class DayPlan {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="PLAN_ID")
+    @JsonBackReference
     public Plan parent_plan;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy="parent_dayplan")
+    @JsonManagedReference
     public Set<TimePlan> timeplan_list= new HashSet();
 }
