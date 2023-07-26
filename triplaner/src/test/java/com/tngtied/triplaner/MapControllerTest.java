@@ -49,7 +49,8 @@ class MapControllerTest {
         mockMvc.perform(post(base_mapping)
                 .content(objectToJson(dto1))
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 
