@@ -8,6 +8,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -32,7 +33,7 @@ public class Plan {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parent_plan")
     @JsonManagedReference
-    public ArrayList<DayPlan> dayplan_list = new ArrayList();
+    public List<DayPlan> dayplan_list;
 
     @Override
     public String toString(){
