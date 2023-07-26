@@ -1,43 +1,43 @@
 package com.tngtied.triplaner;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.web.servlet.MockMvc;
-
-import java.util.Date;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+import java.util.Date;
+
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MockMvc;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 @WebMvcTest(MapController.class)
-//@Import(plan_repository.class)
 class MapControllerTest {
+
+    private static final String base_mapping = "/api/v1/trip";
 
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
+
     @MockBean
     public plan_repository plan_repo;
-    @Autowired
+
     @MockBean
     public dayplan_repository dayplan_repo;
-    private static final String base_mapping = "/api/v1/trip";
 
-    public String objectToJson(Object obj){
-        try{return new ObjectMapper().writeValueAsString(obj);
-        }catch (Exception e){
+    @MockBean
+    private TripService tripService;
+
+    public String objectToJson(Object obj) {
+        try {
+            return new ObjectMapper().writeValueAsString(obj);
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
@@ -45,19 +45,18 @@ class MapControllerTest {
     @Test
     @DisplayName("plan dto post test")
     void planListPostTest() throws Exception {
-        TripThumbnailDTO dto1 = new TripThumbnailDTO("kyungju", new Date(2023,9,13), new Date(2023,9,13));
+        TripThumbnailDTO dto1 = new TripThumbnailDTO("kyungju", new Date(2023, 9, 13), new Date(2023, 9, 13));
         mockMvc.perform(post(base_mapping)
                 .content(objectToJson(dto1))
                 .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                ).andExpect(status().isOk())
+                .accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
     @DisplayName("plan-list get test")
     void planListGetTest() throws Exception {
-        mockMvc.perform(get(base_mapping+"s"))
+        mockMvc.perform(get(base_mapping + "s"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }

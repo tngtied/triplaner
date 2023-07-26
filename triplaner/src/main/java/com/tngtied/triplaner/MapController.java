@@ -1,56 +1,36 @@
 package com.tngtied.triplaner;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class MapController {
 
-    @Autowired
-    public plan_repository plan_repo;
-    @Autowired
-    public  dayplan_repository day_repo;
     private static final String base_mapping = "/api/v1/trip";
 
+    @Autowired
+    public TripService tripService;
 
-    @Transactional
-    @GetMapping(base_mapping+"s")
-    public List<TripThumbnailDTO> trip_list(){
-        Plan plan1 = new Plan();
-        plan1.title = "kyungju";
-        plan1.startDate = new Date(2023,9,13);
-        plan1.endDate = new Date(2023, 8, 12);
-        plan1.dayplan_list = new ArrayList<>();
+    @Autowired
+    public plan_repository plan_repo;
 
-        for (int i =0; i<3; i++){
-            DayPlan dayplan = new DayPlan(plan1);
-            day_repo.save(dayplan);
-            plan1.dayplan_list.add(dayplan);
-        }
+    @Autowired
+    public dayplan_repository day_repo;
 
-        plan_repo.save(plan1);
-
+    @GetMapping(base_mapping + "s")
+    public List<TripThumbnailDTO> trip_list() {
+        tripService.temp();
         System.out.println("@@@@@@@@@@@@@@println@@@@@@@@@@@@@@@@");
-        Iterable<Plan> testList = plan_repo.findAll();
-        for (Plan p: testList){
-            System.out.println(p.toString());
-        }
-
-//        Iterable<Plan> thumbnail_list = plan_repo.findAll();
-//        Plan temp = plan_repo.findById(0).orElse(null);
-//        return (thumbnail_list);
-//        //형태가 이게 맞는지 확인 한 번 해봐야 함
-        return (plan_repo.findThumbnails());
+        return tripService.getTripList();
     }
 
     @PostMapping(base_mapping)
-    public Plan initiate_trip(@RequestBody TripThumbnailDTO trip_dto){
+    public Plan initiate_trip(@RequestBody TripThumbnailDTO trip_dto) {
         Plan plan_instance = new Plan();
         plan_instance.title = trip_dto.title;
         plan_instance.startDate = trip_dto.startDate;
@@ -60,13 +40,12 @@ public class MapController {
         return (plan_instance);
     }
 
-//    @GetMapping(base_mapping+"/{id}")
-//    public Set<DayPlan> get_plan(@PathVariable int id){
-//        return (plan_repo.findById(id)
-//                        .map(getDayplan_list)
-//                                .orElse(null));
-//
-//    }
-
+    // @GetMapping(base_mapping+"/{id}")
+    // public Set<DayPlan> get_plan(@PathVariable int id){
+    // return (plan_repo.findById(id)
+    // .map(getDayplan_list)
+    // .orElse(null));
+    //
+    // }
 
 }
