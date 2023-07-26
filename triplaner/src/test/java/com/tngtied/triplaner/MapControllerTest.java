@@ -10,29 +10,21 @@ import java.util.Date;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-@WebMvcTest(MapController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 class MapControllerTest {
 
     private static final String base_mapping = "/api/v1/trip";
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    public plan_repository plan_repo;
-
-    @MockBean
-    public dayplan_repository dayplan_repo;
-
-    @MockBean
-    private TripService tripService;
 
     public String objectToJson(Object obj) {
         try {

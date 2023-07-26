@@ -18,7 +18,6 @@ public class TripService {
   public dayplan_repository day_repo;
 
   public List<TripThumbnailDTO> getTripList() {
-    System.out.println("@@@@@@@@@@@@@@println@@@@@@@@@@@@@@@@");
     ArrayList<TripThumbnailDTO> list = new ArrayList<>();
 
     for (Plan p : plan_repo.findAll()) {
