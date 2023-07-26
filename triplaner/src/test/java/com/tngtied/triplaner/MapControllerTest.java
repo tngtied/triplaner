@@ -45,11 +45,7 @@ class MapControllerTest {
     @Test
     @DisplayName("plan dto post test")
     void planListPostTest() throws Exception {
-        TripThumbnailDTO dto1 = new TripThumbnailDTO();
-        dto1.title = "kyungju";
-        dto1.startDate = new Date(2023,9,13);
-        dto1.endDate = new Date(2023, 8, 12);
-
+        TripThumbnailDTO dto1 = new TripThumbnailDTO("kyungju", new Date(2023,9,13), new Date(2023,9,13));
         mockMvc.perform(post(base_mapping)
                 .content(objectToJson(dto1))
                 .contentType(MediaType.APPLICATION_JSON)

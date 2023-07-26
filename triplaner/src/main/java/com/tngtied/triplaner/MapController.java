@@ -1,10 +1,12 @@
 package com.tngtied.triplaner;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -17,8 +19,9 @@ public class MapController {
     private static final String base_mapping = "/api/v1/trip";
 
 
+    @Transactional
     @GetMapping(base_mapping+"s")
-    public Iterable<Object[]> trip_list(){
+    public List<TripThumbnailDTO> trip_list(){
         Plan plan1 = new Plan();
         plan1.title = "kyungju";
         plan1.startDate = new Date(2023,9,13);
@@ -33,10 +36,17 @@ public class MapController {
 
         plan_repo.save(plan1);
 
-        Iterable<Plan> thumbnail_list = plan_repo.findAll();
-        Plan temp = plan_repo.findById(0).orElse(null);
-        return (thumbnail_list);
-        //형태가 이게 맞는지 확인 한 번 해봐야 함
+        System.out.println("@@@@@@@@@@@@@@println@@@@@@@@@@@@@@@@");
+        Iterable<Plan> testList = plan_repo.findAll();
+        for (Plan p: testList){
+            System.out.println(p.toString());
+        }
+
+//        Iterable<Plan> thumbnail_list = plan_repo.findAll();
+//        Plan temp = plan_repo.findById(0).orElse(null);
+//        return (thumbnail_list);
+//        //형태가 이게 맞는지 확인 한 번 해봐야 함
+        return (plan_repo.findThumbnails());
     }
 
     @PostMapping(base_mapping)

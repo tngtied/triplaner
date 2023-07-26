@@ -34,4 +34,13 @@ public class Plan {
     @JsonManagedReference
     public ArrayList<DayPlan> dayplan_list = new ArrayList();
 
+    @Override
+    public String toString(){
+        return "Plan[" +
+                "id: " + planId +
+                "title: " + title +
+                "startDate: " + startDate +
+                "endDate: " + endDate +
+                "]";
+    }
 }
