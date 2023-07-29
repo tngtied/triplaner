@@ -9,26 +9,6 @@ import java.util.Date;
 import java.util.List;
 
 @Entity
-@NamedNativeQuery(
-        name="find_trip_thumbnail_dto",
-        query="SELECT" +
-                " p.TITLE AS title, " +
-                " p.START_DATE AS startDate, " +
-                " p.END_DATE AS endDate" +
-                " FROM Plan p",
-        resultSetMapping = "trip_thumbnail_dto"
-)
-@SqlResultSetMapping(
-        name="trip_thumbnail_dto",
-        classes = @ConstructorResult(
-                targetClass = TripThumbnailDTO.class,
-                columns = {
-                        @ColumnResult(name="title", type=String.class),
-                        @ColumnResult(name="startDate", type= Date.class),
-                        @ColumnResult(name="endDate", type=Date.class)
-                }
-        )
-)
 @Table(name="PLAN")
 public class Plan {
     private static final String datePattern = "yyyy-MM-dd";
