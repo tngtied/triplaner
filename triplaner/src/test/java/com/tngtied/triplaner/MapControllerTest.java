@@ -25,6 +25,8 @@ class MapControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+    @Autowired
+    public TripService tripService;
 
     public String objectToJson(Object obj) {
         try {
@@ -49,13 +51,19 @@ class MapControllerTest {
     @Test
     @DisplayName("plan-list get test")
     void planListGetTest() throws Exception {
+        tripService.make_data();
         mockMvc.perform(get(base_mapping + "s"))
                 .andExpect(status().isOk())
                 .andDo(print());
     }
 
     @Test
-    void trip_list() {
+    @DisplayName("plan get test using id")
+    void planGetTest() throws Exception{
+        tripService.make_data();
+        mockMvc.perform(get(base_mapping+"/1"))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test

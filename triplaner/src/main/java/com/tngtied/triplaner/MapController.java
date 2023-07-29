@@ -3,10 +3,7 @@ package com.tngtied.triplaner;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MapController {
@@ -24,8 +21,6 @@ public class MapController {
 
     @GetMapping(base_mapping + "s")
     public List<TripThumbnailDTO> trip_list() {
-        tripService.make_data();
-        //return tripService.getTripList();
         return tripService.getTripList_query();
     }
 
@@ -40,12 +35,12 @@ public class MapController {
         return (plan_instance);
     }
 
-    // @GetMapping(base_mapping+"/{id}")
-    // public Set<DayPlan> get_plan(@PathVariable int id){
-    // return (plan_repo.findById(id)
-    // .map(getDayplan_list)
-    // .orElse(null));
-    //
-    // }
+     @GetMapping(base_mapping+"/{id}")
+     public Plan get_plan(@PathVariable int id){
+        Plan p = plan_repo.findById(id).orElse(null);
+        if (p==null){System.out.println("found plan was null");}
+        else{System.out.println(p.toString());}
+        return(p);
+     }
 
 }
