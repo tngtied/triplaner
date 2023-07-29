@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 public interface TripThumbnailDTO {
 
-    long getPlanId();
+    long getId();
 
     String getTitle();
 

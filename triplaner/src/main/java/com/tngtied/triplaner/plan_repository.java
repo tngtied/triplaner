@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface plan_repository extends CrudRepository<Plan, Integer> {
 
-    @Query("SELECT p FROM Plan p")
+    @Query("SELECT p.planId AS id, p.title, p.startDate, p.endDate FROM Plan p")
     public List<TripThumbnailDTO> findThumbnails();
 }

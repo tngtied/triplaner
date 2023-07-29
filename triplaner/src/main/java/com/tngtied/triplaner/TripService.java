@@ -22,7 +22,7 @@ public class TripService {
   @Autowired
   public place_repository place_repo;
 
-  public List<TripThumbnailDTO> getTripList_query(){
+  public List<TripThumbnailDTO> getTripList(){
     List<TripThumbnailDTO> list = plan_repo.findThumbnails();
     return list;
   }

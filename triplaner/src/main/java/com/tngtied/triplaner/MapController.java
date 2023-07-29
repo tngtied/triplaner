@@ -21,7 +21,7 @@ public class MapController {
 
     @GetMapping(base_mapping + "s")
     public List<TripThumbnailDTO> trip_list() {
-        return tripService.getTripList_query();
+        return tripService.getTripList();
     }
 
     @PostMapping(base_mapping)
@@ -43,8 +43,8 @@ public class MapController {
         return(p);
      }
 
-     @PutMapping(base_mapping+"/{id}/{date}")
-     public DayPlan put_timeplan(@PathVariable int id, @PathVariable int date, @RequestBody TimePlan newPlan){
+    //  @PutMapping(base_mapping+"/{id}/{date}")
+    //  public DayPlan put_timeplan(@PathVariable int id, @PathVariable int date, @RequestBody TimePlan newPlan){
 
-     }
+    //  }
 }
