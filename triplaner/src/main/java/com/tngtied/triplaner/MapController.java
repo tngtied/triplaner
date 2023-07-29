@@ -43,4 +43,8 @@ public class MapController {
         return(p);
      }
 
+     @PutMapping(base_mapping+"/{id}/{date}")
+     public DayPlan put_timeplan(@PathVariable int id, @PathVariable int date, @RequestBody TimePlan newPlan){
+
+     }
 }

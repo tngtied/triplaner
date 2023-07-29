@@ -11,6 +11,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@NamedNativeQuery(
+        name="find_dayplan_with_id_date",
+        query="SELECT d" +
+                "FROM DayPlan d " +
+                "WHERE (SELECT PLAN_ID FROM d.PARENT_PLAN) := id_in " +
+                "AND d.PLAN_DATE := date_in"
+)
 @Table(name = "DAYPLAN")
 public class DayPlan {
     private static final String datePattern = "yyyy-MM-dd";
