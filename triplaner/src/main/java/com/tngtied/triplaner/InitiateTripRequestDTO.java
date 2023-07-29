@@ -4,20 +4,24 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
-public interface TripThumbnailDTO {
-
-    long getPlanId();
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class InitiateTripRequestDTO {
 
     @NonNull
-    String getTitle();
+    public String title;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NonNull
-    Date getStartDate();
+    public Date startDate;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     @NonNull
-    Date getEndDate();
+    public Date endDate;
 }

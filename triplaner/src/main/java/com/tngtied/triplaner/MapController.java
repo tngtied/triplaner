@@ -25,7 +25,7 @@ public class MapController {
     }
 
     @PostMapping(base_mapping)
-    public Plan initiate_trip(@RequestBody TripThumbnailDTO trip_dto) {
+    public Plan initiate_trip(@RequestBody InitiateTripRequestDTO trip_dto) {
         Plan plan_instance = new Plan();
         plan_instance.title = trip_dto.title;
         plan_instance.startDate = trip_dto.startDate;
