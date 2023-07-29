@@ -27,7 +27,7 @@ public class TripService {
     ArrayList<TripThumbnailDTO> list = new ArrayList<>();
 
     for (Plan p : plan_repo.findAll()) {
-      list.add(new TripThumbnailDTO(p.title, p.startDate, p.endDate));
+      list.add(new TripThumbnailDTO(p.planId, p.title, p.startDate, p.endDate));
       System.out.println(p.toString());
     }
 
