@@ -3,9 +3,11 @@ package com.tngtied.triplaner;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import lombok.Data;
 
 import java.util.Date;
 
+@Data
 public class TripThumbnailDTO {
     private static final String datePattern = "yyyy-MM-dd";
     public String title;

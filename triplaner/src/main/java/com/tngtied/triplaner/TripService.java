@@ -28,8 +28,13 @@ public class TripService {
     return list;
   }
 
+  public List<TripThumbnailDTO> getTripList_query(){
+    List<TripThumbnailDTO> list = plan_repo.findThumbnails();
+    return list;
+  }
+
   @Transactional
-  public void temp() {
+  public void make_data() {
     Plan plan1 = new Plan();
     plan1.title = "kyungju";
     plan1.startDate = new Date(2023, 9, 13);

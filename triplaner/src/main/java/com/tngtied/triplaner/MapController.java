@@ -24,9 +24,9 @@ public class MapController {
 
     @GetMapping(base_mapping + "s")
     public List<TripThumbnailDTO> trip_list() {
-        tripService.temp();
-        System.out.println("@@@@@@@@@@@@@@println@@@@@@@@@@@@@@@@");
-        return tripService.getTripList();
+        tripService.make_data();
+        //return tripService.getTripList();
+        return tripService.getTripList_query();
     }
 
     @PostMapping(base_mapping)
