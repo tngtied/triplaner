@@ -1,5 +1,6 @@
 package com.tngtied.triplaner.controller;
 
+import java.util.Date;
 import java.util.List;
 
 import com.tngtied.triplaner.*;
@@ -51,7 +52,11 @@ public class MapController {
      }
 
      @PutMapping(base_mapping+"/{id}/{date}")
-     public DayPlan put_timeplan(@PathVariable int id, @PathVariable int date, @RequestBody TimePlan newPlan){
-
+     public DayPlan put_timeplan(@PathVariable int id, @PathVariable String date, @RequestBody TimePlan newPlan){
+        Date pathDate = tripService.dateParser(date);
+        if (pathDate == null){return null;}
+        //이거 프론트에 어케 전달할지몰르겟음
+        DayPlan dateFound = day_repo.findByIdAndDate(id, pathDate);
+        return  dateFound;
      }
 }

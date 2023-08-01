@@ -1,13 +1,13 @@
 package com.tngtied.triplaner;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.Date;
 
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
+import com.tngtied.triplaner.entity.TimePlan;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,6 +68,14 @@ class MapControllerTest {
     }
 
     @Test
-    void initiate_trip() {
+    void datePlanPutTest() throws Exception {
+        tripService.make_data();
+        TimePlan tp = tripService.makeTimeplan(3);
+        mockMvc.perform(put(base_mapping+"/1/2023-09-01")
+                .content(objectToJson(tp))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 }

@@ -11,6 +11,12 @@ import java.util.Date;
 @Repository
 public interface dayplan_repository extends CrudRepository<DayPlan, Integer> {
 
-    @Query(name = "find_dayplan_with_id_date", nativeQuery = true)
-    public DayPlan findByIdDate(@Param("id_in") int id_in, @Param("date_in") Date date_in );
+    String ByIdAndDate = "SELECT * " +
+            "FROM DayPlan d " +
+            "WHERE " +
+            //"(SELECT PLAN_ID FROM (SELECT d.PARENT_PLAN))=:id_in AND " +
+            "d.PARENT_PLAN.PLAN_ID=:id_in AND " +
+            "d.PLAN_DATE=:date_in";
+    @Query(value = ByIdAndDate, nativeQuery = true)
+    public DayPlan findByIdAndDate(@Param("id_in") int id_in, @Param("date_in") Date date_in );
 }
