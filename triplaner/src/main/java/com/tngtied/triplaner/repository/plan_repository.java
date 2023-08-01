@@ -1,7 +1,9 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.repository;
 
 import java.util.List;
 
+import com.tngtied.triplaner.entity.Plan;
+import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

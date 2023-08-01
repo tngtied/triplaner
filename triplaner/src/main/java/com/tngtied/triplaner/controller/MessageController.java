@@ -1,12 +1,12 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.controller;
+import com.tngtied.triplaner.repository.DB;
+import com.tngtied.triplaner.entity.Memo;
+import com.tngtied.triplaner.dto.RequestMemo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @RestController
 public class MessageController {

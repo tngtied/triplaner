@@ -1,4 +1,4 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

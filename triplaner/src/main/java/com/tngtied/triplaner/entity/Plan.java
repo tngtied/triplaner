@@ -1,8 +1,9 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import jakarta.persistence.*;
 
 import java.util.Date;

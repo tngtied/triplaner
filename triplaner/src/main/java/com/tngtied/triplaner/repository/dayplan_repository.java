@@ -1,5 +1,6 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.repository;
 
+import com.tngtied.triplaner.entity.DayPlan;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;

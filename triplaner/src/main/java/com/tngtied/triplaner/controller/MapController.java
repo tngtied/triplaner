@@ -1,7 +1,14 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.controller;
 
 import java.util.List;
 
+import com.tngtied.triplaner.*;
+import com.tngtied.triplaner.dto.TripThumbnailDTO;
+import com.tngtied.triplaner.entity.DayPlan;
+import com.tngtied.triplaner.entity.Plan;
+import com.tngtied.triplaner.entity.TimePlan;
+import com.tngtied.triplaner.repository.dayplan_repository;
+import com.tngtied.triplaner.repository.plan_repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

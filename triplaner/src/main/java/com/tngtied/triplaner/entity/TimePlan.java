@@ -1,11 +1,11 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tngtied.triplaner.entity.DayPlan;
+import com.tngtied.triplaner.entity.Place;
 import jakarta.persistence.*;
-import lombok.Data;
 
 import java.sql.Time;
 

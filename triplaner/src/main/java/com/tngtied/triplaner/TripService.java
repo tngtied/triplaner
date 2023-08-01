@@ -6,6 +6,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.tngtied.triplaner.dto.TripThumbnailDTO;
+import com.tngtied.triplaner.entity.DayPlan;
+import com.tngtied.triplaner.entity.Plan;
+import com.tngtied.triplaner.entity.TimePlan;
+import com.tngtied.triplaner.repository.dayplan_repository;
+import com.tngtied.triplaner.repository.place_repository;
+import com.tngtied.triplaner.repository.plan_repository;
+import com.tngtied.triplaner.repository.timeplan_repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

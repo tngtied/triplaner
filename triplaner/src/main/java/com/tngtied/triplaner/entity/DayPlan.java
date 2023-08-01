@@ -1,4 +1,4 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
