@@ -4,7 +4,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.entity.TimePlan;
@@ -40,7 +40,7 @@ class MapControllerTest {
     @Test
     @DisplayName("plan dto post test")
     void planListPostTest() throws Exception {
-        TripThumbnailDTO dto1 = new TripThumbnailDTO("kyungju", new Date(2023, 9, 13), new Date(2023, 9, 13));
+        TripThumbnailDTO dto1 = new TripThumbnailDTO("kyungju", LocalDate.of(2023, 9, 13), LocalDate.of(2023, 9, 13));
         mockMvc.perform(post(base_mapping)
                 .content(objectToJson(dto1))
                 .contentType(MediaType.APPLICATION_JSON)

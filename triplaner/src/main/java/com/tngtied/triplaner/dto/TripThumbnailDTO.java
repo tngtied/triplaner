@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import lombok.Data;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Data
 public class TripThumbnailDTO {
@@ -17,9 +17,11 @@ public class TripThumbnailDTO {
     public int id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)
-    public Date startDate, endDate;
+    public LocalDate startDate;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)
+    public LocalDate endDate;
 
-    public TripThumbnailDTO(String title_, Date startDate_, Date endDate_){
+    public TripThumbnailDTO(String title_, LocalDate startDate_, LocalDate endDate_){
         this.title = title_;
         this.startDate = startDate_;
         this.endDate = endDate_;

@@ -35,3 +35,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### API KEYS ###
+### 퍼블릭 발행 시 주석처리 제거 ###
+### application-API-KEY.properties ###

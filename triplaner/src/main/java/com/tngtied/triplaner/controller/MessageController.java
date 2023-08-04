@@ -5,8 +5,8 @@ import com.tngtied.triplaner.dto.RequestMemo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 
 @RestController
 public class MessageController {
@@ -32,8 +32,8 @@ public class MessageController {
     public Memo postmemo(@RequestBody RequestMemo requestmemo){
         Memo memo_instace = new Memo();
         memo_instace.message = requestmemo.message;
-        memo_instace.createdate = new Date();
-        memo_instace.touchdate = new Date();
+        memo_instace.createdate = LocalDate.now();
+        memo_instace.touchdate = LocalDate.now();
         repo.save(memo_instace);
         return(memo_instace);
     }
@@ -46,7 +46,7 @@ public class MessageController {
     @PostMapping("/memo/{id}")
     public Memo touchmemo(@PathVariable int id, @RequestBody RequestMemo requestMemo){
         Memo memo_instance = repo.findById(id).orElse(null);
-        memo_instance.touchdate = new Date();
+        memo_instance.touchdate = LocalDate.now();
         memo_instance.message = requestMemo.message;
         repo.save(memo_instance);
         return (memo_instance);

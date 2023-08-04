@@ -10,12 +10,12 @@ public class Place{
     @GeneratedValue
     private Long placeId;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name ="PARENT_PLAN")
     @JsonBackReference
     private TimePlan parentPlan;
     @JsonProperty("lat")
     public double latitude;
-    @JsonProperty("alt")
+    @JsonProperty("lng")
     public double longitude;
 }

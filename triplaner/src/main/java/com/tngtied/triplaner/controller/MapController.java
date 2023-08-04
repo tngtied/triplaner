@@ -1,22 +1,33 @@
 package com.tngtied.triplaner.controller;
 
-import java.util.Date;
+import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
 
 import com.tngtied.triplaner.*;
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.entity.DayPlan;
+import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
 import com.tngtied.triplaner.repository.dayplan_repository;
 import com.tngtied.triplaner.repository.plan_repository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class MapController {
 
     private static final String base_mapping = "/api/v1/trip";
+
+    @Value("${NAVER-KEY}")
+    private String naverKey;
+    @Value("${NAVER-CLIENT}")
+    private String naverClientId;
 
     @Autowired
     public TripService tripService;
@@ -52,11 +63,32 @@ public class MapController {
      }
 
      @PutMapping(base_mapping+"/{id}/{date}")
-     public DayPlan put_timeplan(@PathVariable int id, @PathVariable String date, @RequestBody TimePlan newPlan){
-        Date pathDate = tripService.dateParser(date);
+     public DayPlan put_timeplan(@PathVariable long id, @PathVariable String date, @RequestBody TimePlan newTimePlan){
+        LocalDate pathDate = LocalDate.parse(date);
         if (pathDate == null){return null;}
         //이거 프론트에 어케 전달할지몰르겟음
-        DayPlan dateFound = day_repo.findByIdAndDate(id, pathDate);
-        return  dateFound;
+        System.out.println("Date search started with date: ");
+        System.out.println(pathDate);
+        DayPlan dayPlanFound = day_repo.findByParentPlanPlanIdAndPlanDate(id, pathDate);
+        tripService.saveTimePlanToDayPlan(dayPlanFound, newTimePlan);
+        return  dayPlanFound;
+     }
+
+     @PostMapping(base_mapping+"geocode")
+    public Place addressToCoord(@RequestBody HashMap<String, Object> map) throws IOException {
+        URL url = new URL("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + map.get("address"));
+         HttpURLConnection geoCon = (HttpURLConnection) url.openConnection();
+         geoCon.setRequestMethod("GET");
+         geoCon.setRequestProperty("X-NCP-APIGW-API-KEY-ID", naverClientId);
+         geoCon.setRequestProperty("X-NCP-APIGW-API-KEY", naverKey);
+
+         geoCon.connect();
+
+         if (geoCon.getResponseCode()!=200){
+
+         }
+
+         //print response body
+
      }
 }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +31,7 @@ public class DayPlan {
     @Column(name="PLAN_DATE")
     @JsonProperty("Date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = datePattern)
-    public Date planDate;
+    public LocalDate planDate;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="PARENT_PLAN")

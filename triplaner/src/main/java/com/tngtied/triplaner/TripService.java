@@ -1,12 +1,9 @@
 package com.tngtied.triplaner;
 
 import java.sql.Time;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
@@ -50,12 +47,6 @@ public class TripService {
     return list;
   }
 
-  public Date dateParser(String str){
-    DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
-    sdf.setLenient(true);
-    try{return sdf.parse(str);}
-    catch(ParseException e){return null;}
-  }
 
   public TimePlan makeTimeplan(int j){
     TimePlan timePlan = new TimePlan();
@@ -73,14 +64,14 @@ public class TripService {
     System.out.println("println: make_data invoked");
     Plan plan1 = new Plan();
     plan1.title = "kyungju";
-    plan1.startDate = new Date(2023, 9, 13);
-    plan1.endDate = new Date(2023, 8, 12);
+    plan1.startDate = LocalDate.of(2023, 8, 13);
+    plan1.endDate =  LocalDate.of(2023, 9, 12);
 
     ArrayList<DayPlan> dayplan_list = new ArrayList<>();
     for (int i = 1; i < 3; i++) {
       DayPlan dayplan = new DayPlan();
       dayplan.setParent(plan1);
-      dayplan.planDate = new Date(2023, 9, i);
+      dayplan.planDate = LocalDate.of(2023, 9, i);
 
       if (i==0){
         for (int j=1; j<3; j++){
@@ -90,11 +81,24 @@ public class TripService {
         }
       }
       day_repo.save(dayplan);
+
+      System.out.println("Dayplan saved as: ");
+      System.out.println(dayplan.planDate);
+
       dayplan_list.add(dayplan);
     }
 
     plan1.dayplan_list = dayplan_list;
     plan_repo.save(plan1);
     System.out.println(plan1);
+  }
+
+  public void saveTimePlanToDayPlan(DayPlan d, TimePlan t){
+    place_repo.save(t.place);
+    t.parentPlan = d;
+    time_repo.save(t);
+    //date validation needed
+    d.timeplan_list.add(t);
+    day_repo.save(d);
   }
 }

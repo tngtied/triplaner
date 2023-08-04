@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Entity
@@ -24,9 +24,9 @@ import java.util.List;
         classes = @ConstructorResult(
                 targetClass = TripThumbnailDTO.class,
                 columns = {
-                        @ColumnResult(name="title", type=String.class),
-                        @ColumnResult(name="startDate", type= Date.class),
-                        @ColumnResult(name="endDate", type=Date.class)
+                        @ColumnResult(name="title", type = String.class),
+                        @ColumnResult(name="startDate", type = LocalDate.class),
+                        @ColumnResult(name="endDate", type = LocalDate.class)
                 }
         )
 )
@@ -48,11 +48,11 @@ public class Plan {
 
     @Column(name="START_DATE")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)
-    public Date startDate;
+    public LocalDate startDate;
 
     @Column(name="END_DATE")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)
-    public Date endDate;
+    public LocalDate endDate;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "parentPlan")
     @JsonManagedReference
