@@ -18,12 +18,12 @@ public class NGeocodeDTO {
     metaDTO meta;
 
     @Data
-    class addressDTO {
+    public class addressDTO {
         String roadAddress;
         String jibunAddress;
         String englishAddress;
-        String x;
-        String y;
+        public String x;
+        public String y;
         double distance;
     }
     addressDTO addresses[];

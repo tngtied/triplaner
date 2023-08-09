@@ -1,13 +1,18 @@
 package com.tngtied.triplaner;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.tngtied.triplaner.dto.NGeocodeDTO;
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.entity.DayPlan;
+import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
 import com.tngtied.triplaner.repository.dayplan_repository;
@@ -93,6 +98,25 @@ public class TripService {
     System.out.println(plan1);
   }
 
+  public String readFromReader(InputStreamReader r) throws IOException {
+    BufferedReader br = new BufferedReader(r);
+    String result="";
+    try{
+      String inputLine;
+      StringBuffer response = new StringBuffer();
+      while ((inputLine = br.readLine()) != null) {
+        response.append(inputLine);
+      }
+      result = response.toString();
+    }catch (Exception e){
+      System.out.println("error occured at readFromReader");
+      System.out.println(e);
+    }finally {
+      if (br!=null){br.close();}
+    }
+    return result;
+  }
+
   public void saveTimePlanToDayPlan(DayPlan d, TimePlan t){
     place_repo.save(t.place);
     t.parentPlan = d;
@@ -100,5 +124,13 @@ public class TripService {
     //date validation needed
     d.timeplan_list.add(t);
     day_repo.save(d);
+  }
+
+  public Place nGeoDTOToPlace(NGeocodeDTO geoDTO){
+    Place place = new Place();
+    place.latitude = Double.valueOf(geoDTO.getAddresses()[0].x);
+    place.longitude = Double.valueOf(geoDTO.getAddresses()[0].y);
+    place_repo.save(place);
+    return place;
   }
 }

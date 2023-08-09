@@ -5,15 +5,17 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.rmi.UnexpectedException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
+import javax.ws.rs.BadRequestException;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonToken;
 import com.tngtied.triplaner.*;
 import com.tngtied.triplaner.dto.NGeocodeDTO;
+import com.tngtied.triplaner.dto.NGeocodeWithErrDTO;
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.entity.DayPlan;
 import com.tngtied.triplaner.entity.Place;
@@ -93,24 +95,32 @@ public class MapController {
          BufferedReader reader;
          String Res = "";
 
+
          var gson = new Gson();
          InputStreamReader inputStreamReader;
          int responseCode = geoCon.getResponseCode();
-         if (!=200){
-             inputStreamReader = new InputStreamReader(geoCon.getErrorStream());
-
-
+         if (responseCode!=200 ){
+             if(responseCode!= 400 && responseCode!=500) {
+                 inputStreamReader = new InputStreamReader(geoCon.getErrorStream());
+                 String errorMessage =tripService.readFromReader(inputStreamReader);
+                 System.out.println(errorMessage);
+                 if (responseCode == 400){throw new BadRequestException();}
+                 else{throw new UnexpectedException(errorMessage);}
+             }
+             else{
+                 //response json from Naver geocode received
+                 inputStreamReader = new InputStreamReader(geoCon.getInputStream());
+                 JsonReader jsonReader = new JsonReader(inputStreamReader);
+                 jsonReader.setLenient(true);
+                 NGeocodeWithErrDTO nGeocodeWithErrDTO = gson.fromJson(jsonReader, NGeocodeWithErrDTO.class);
+                 throw new UnexpectedException(nGeocodeWithErrDTO.getErrorMessage());
+             }
          }else{
              inputStreamReader = new InputStreamReader(geoCon.getInputStream());
+             JsonReader jsonReader = new JsonReader(inputStreamReader);
+             jsonReader.setLenient(true);
+             NGeocodeDTO nGeocodeDTO = gson.fromJson(jsonReader, NGeocodeDTO.class);
+             return (tripService.nGeoDTOToPlace(nGeocodeDTO));
          }
-
-
-         JsonReader jsonReader = new JsonReader(inputStreamReader);
-         jsonReader.setLenient(true);
-
-         NGeocodeDTO nGeocodeDTO = gson.fromJson(jsonReader, NGeocodeDTO.class);
-
-         //print response body
-
      }
 }
