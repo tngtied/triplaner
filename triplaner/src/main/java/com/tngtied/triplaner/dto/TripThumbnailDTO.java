@@ -12,10 +12,6 @@ public class TripThumbnailDTO {
     private static final String datePattern = "yyyy-MM-dd";
     public String title;
 
-    @Id
-    @GeneratedValue
-    public int id;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)
     public LocalDate startDate;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)

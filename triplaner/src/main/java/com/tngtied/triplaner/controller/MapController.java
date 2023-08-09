@@ -1,13 +1,19 @@
 package com.tngtied.triplaner.controller;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.gson.Gson;
+import com.google.gson.stream.JsonReader;
+import com.google.gson.stream.JsonToken;
 import com.tngtied.triplaner.*;
+import com.tngtied.triplaner.dto.NGeocodeDTO;
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.entity.DayPlan;
 import com.tngtied.triplaner.entity.Place;
@@ -15,6 +21,7 @@ import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
 import com.tngtied.triplaner.repository.dayplan_repository;
 import com.tngtied.triplaner.repository.plan_repository;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -83,10 +90,25 @@ public class MapController {
          geoCon.setRequestProperty("X-NCP-APIGW-API-KEY", naverKey);
 
          geoCon.connect();
+         BufferedReader reader;
+         String Res = "";
 
-         if (geoCon.getResponseCode()!=200){
+         var gson = new Gson();
+         InputStreamReader inputStreamReader;
+         int responseCode = geoCon.getResponseCode();
+         if (!=200){
+             inputStreamReader = new InputStreamReader(geoCon.getErrorStream());
 
+
+         }else{
+             inputStreamReader = new InputStreamReader(geoCon.getInputStream());
          }
+
+
+         JsonReader jsonReader = new JsonReader(inputStreamReader);
+         jsonReader.setLenient(true);
+
+         NGeocodeDTO nGeocodeDTO = gson.fromJson(jsonReader, NGeocodeDTO.class);
 
          //print response body
 
