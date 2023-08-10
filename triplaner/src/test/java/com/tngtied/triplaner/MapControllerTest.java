@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.entity.TimePlan;
+import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,19 @@ class MapControllerTest {
         TimePlan tp = tripService.makeTimeplan(3);
         mockMvc.perform(put(base_mapping+"/1/2023-09-01")
                 .content(objectToJson(tp))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void addressToCoord() throws Exception {
+        JSONObject postContent = new JSONObject();
+        postContent.put("address", "서울특별시 강남구 강남대로 310");
+
+        mockMvc.perform(post(base_mapping+"geocode")
+                .content(String.valueOf(postContent))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())

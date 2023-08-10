@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.rmi.UnexpectedException;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -12,6 +13,8 @@ import java.util.List;
 import javax.ws.rs.BadRequestException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.tngtied.triplaner.*;
 import com.tngtied.triplaner.dto.NGeocodeDTO;
@@ -83,10 +86,12 @@ public class MapController {
         return  dayPlanFound;
      }
 
-     @PostMapping(base_mapping+"geocode")
+    @PostMapping(base_mapping+"geocode")
     public Place addressToCoord(@RequestBody HashMap<String, Object> map) throws IOException {
-        URL url = new URL("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + map.get("address"));
+        URL url = new URL("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(map.get("address").toString(), "utf-8"));
+        System.out.println("url is: "+ url.toString());
          HttpURLConnection geoCon = (HttpURLConnection) url.openConnection();
+         geoCon.setRequestProperty("Content-Type", "application/json");
          geoCon.setRequestMethod("GET");
          geoCon.setRequestProperty("X-NCP-APIGW-API-KEY-ID", naverClientId);
          geoCon.setRequestProperty("X-NCP-APIGW-API-KEY", naverKey);
@@ -101,7 +106,7 @@ public class MapController {
          int responseCode = geoCon.getResponseCode();
          if (responseCode!=200 ){
              if(responseCode!= 400 && responseCode!=500) {
-                 inputStreamReader = new InputStreamReader(geoCon.getErrorStream());
+                 inputStreamReader = new InputStreamReader(geoCon.getErrorStream(), "utf-8");
                  String errorMessage =tripService.readFromReader(inputStreamReader);
                  System.out.println(errorMessage);
                  if (responseCode == 400){throw new BadRequestException();}
@@ -109,17 +114,27 @@ public class MapController {
              }
              else{
                  //response json from Naver geocode received
-                 inputStreamReader = new InputStreamReader(geoCon.getInputStream());
+                 inputStreamReader = new InputStreamReader(geoCon.getInputStream(), "utf-8");
                  JsonReader jsonReader = new JsonReader(inputStreamReader);
                  jsonReader.setLenient(true);
                  NGeocodeWithErrDTO nGeocodeWithErrDTO = gson.fromJson(jsonReader, NGeocodeWithErrDTO.class);
                  throw new UnexpectedException(nGeocodeWithErrDTO.getErrorMessage());
              }
          }else{
-             inputStreamReader = new InputStreamReader(geoCon.getInputStream());
+             inputStreamReader = new InputStreamReader(geoCon.getInputStream(), "utf-8");
+
+//             String resultMessage = tripService.readFromReader(inputStreamReader);
+//             System.out.println("message from naver is: ");
+//             System.out.println(resultMessage);
+//             JsonObject jsonObject = new Gson().fromJson(resultMessage, JsonObject.class);
+//
+//             Place p = new Place();
+//             p.longitude = Double.valueOf(jsonObject.get("addresses").getAsJsonArray()[0].x);\
+
              JsonReader jsonReader = new JsonReader(inputStreamReader);
              jsonReader.setLenient(true);
              NGeocodeDTO nGeocodeDTO = gson.fromJson(jsonReader, NGeocodeDTO.class);
+             System.out.println(nGeocodeDTO.toString());
              return (tripService.nGeoDTOToPlace(nGeocodeDTO));
          }
      }
