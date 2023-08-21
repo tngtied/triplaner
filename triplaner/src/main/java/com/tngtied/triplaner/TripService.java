@@ -7,10 +7,8 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.List;
 
 import com.tngtied.triplaner.dto.NGeocodeDTO;
-import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.entity.DayPlan;
 import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
@@ -61,7 +59,7 @@ public class TripService {
       dayplan.setParent(plan1);
       dayplan.planDate = LocalDate.of(2023, 9, i);
 
-      if (i==0){
+      if (i==1){
         for (int j=1; j<3; j++){
           TimePlan tp = makeTimeplan(j);
           tp.parentPlan = dayplan;
@@ -95,7 +93,7 @@ public class TripService {
       System.out.println("error occured at readFromReader");
       System.out.println(e);
     }finally {
-      if (br!=null){br.close();}
+      br.close();
     }
     return result;
   }
@@ -111,8 +109,8 @@ public class TripService {
 
   public Place nGeoDTOToPlace(NGeocodeDTO geoDTO){
     Place place = new Place();
-    place.latitude = Double.valueOf(geoDTO.getAddresses()[0].x);
-    place.longitude = Double.valueOf(geoDTO.getAddresses()[0].y);
+    place.latitude = Double.parseDouble(geoDTO.getAddresses()[0].x);
+    place.longitude = Double.parseDouble(geoDTO.getAddresses()[0].y);
     place_repo.save(place);
     return place;
   }

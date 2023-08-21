@@ -69,7 +69,7 @@ public class MapController {
      public Plan get_plan(@PathVariable int id){
         Plan p = plan_repo.findById(id).orElse(null);
         if (p==null){System.out.println("found plan was null");}
-        else{System.out.println(p.toString());}
+        else{System.out.println(p);}
         return(p);
      }
 
@@ -96,9 +96,6 @@ public class MapController {
          geoCon.setRequestProperty("X-NCP-APIGW-API-KEY", naverKey);
 
          geoCon.connect();
-         BufferedReader reader;
-         String Res = "";
-
 
          var gson = new Gson();
          InputStreamReader inputStreamReader;
