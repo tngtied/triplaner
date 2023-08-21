@@ -36,23 +36,6 @@ public class TripService {
   public place_repository place_repo;
 
 
-  public List<TripThumbnailDTO> getTripList() {
-    ArrayList<TripThumbnailDTO> list = new ArrayList<>();
-
-    for (Plan p : plan_repo.findAll()) {
-      list.add(new TripThumbnailDTO(p.title, p.startDate, p.endDate));
-      System.out.println(p.toString());
-    }
-
-    return list;
-  }
-
-  public List<TripThumbnailDTO> getTripList_query(){
-    List<TripThumbnailDTO> list = plan_repo.findThumbnails();
-    return list;
-  }
-
-
   public TimePlan makeTimeplan(int j){
     TimePlan timePlan = new TimePlan();
     timePlan.price = "19000";

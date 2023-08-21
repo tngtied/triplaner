@@ -13,10 +13,9 @@ import java.util.List;
 import javax.ws.rs.BadRequestException;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonReader;
 import com.tngtied.triplaner.*;
+import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.dto.NGeocodeDTO;
 import com.tngtied.triplaner.dto.NGeocodeWithErrDTO;
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
@@ -26,7 +25,6 @@ import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
 import com.tngtied.triplaner.repository.dayplan_repository;
 import com.tngtied.triplaner.repository.plan_repository;
-import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -52,11 +50,12 @@ public class MapController {
 
     @GetMapping(base_mapping + "s")
     public List<TripThumbnailDTO> trip_list() {
-        return tripService.getTripList_query();
+
+        return plan_repo.findThumbnails();
     }
 
     @PostMapping(base_mapping)
-    public Plan initiate_trip(@RequestBody TripThumbnailDTO trip_dto) {
+    public Plan initiate_trip(@RequestBody InitiateTripRequestDTO trip_dto) {
         Plan plan_instance = new Plan();
         plan_instance.title = trip_dto.title;
         plan_instance.startDate = trip_dto.startDate;
@@ -75,7 +74,7 @@ public class MapController {
      }
 
      @PutMapping(base_mapping+"/{id}/{date}")
-     public DayPlan put_timeplan(@PathVariable long id, @PathVariable String date, @RequestBody TimePlan newTimePlan){
+     public DayPlan putTimePlan(@PathVariable long id, @PathVariable String date, @RequestBody TimePlan newTimePlan){
         LocalDate pathDate = LocalDate.parse(date);
         if (pathDate == null){return null;}
         //이거 프론트에 어케 전달할지몰르겟음

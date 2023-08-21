@@ -6,7 +6,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDate;
 
-import com.tngtied.triplaner.dto.TripThumbnailDTO;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.entity.TimePlan;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
@@ -32,7 +33,7 @@ class MapControllerTest {
 
     public String objectToJson(Object obj) {
         try {
-            return new ObjectMapper().writeValueAsString(obj);
+            return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(obj);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -41,7 +42,7 @@ class MapControllerTest {
     @Test
     @DisplayName("plan dto post test")
     void planListPostTest() throws Exception {
-        TripThumbnailDTO dto1 = new TripThumbnailDTO("kyungju", LocalDate.of(2023, 9, 13), LocalDate.of(2023, 9, 13));
+        InitiateTripRequestDTO dto1 = new InitiateTripRequestDTO("kyungju", LocalDate.of(2023, 9, 13), LocalDate.of(2023, 9, 13));
         mockMvc.perform(post(base_mapping)
                 .content(objectToJson(dto1))
                 .contentType(MediaType.APPLICATION_JSON)
@@ -69,7 +70,7 @@ class MapControllerTest {
     }
 
     @Test
-    void datePlanPutTest() throws Exception {
+    void putTimePlanTest() throws Exception {
         tripService.make_data();
         TimePlan tp = tripService.makeTimeplan(3);
         mockMvc.perform(put(base_mapping+"/1/2023-09-01")
