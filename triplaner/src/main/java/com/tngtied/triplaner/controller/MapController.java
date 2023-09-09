@@ -1,6 +1,5 @@
 package com.tngtied.triplaner.controller;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -14,7 +13,6 @@ import javax.ws.rs.BadRequestException;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import com.tngtied.triplaner.*;
 import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.dto.NGeocodeDTO;
 import com.tngtied.triplaner.dto.NGeocodeWithErrDTO;
@@ -23,16 +21,18 @@ import com.tngtied.triplaner.entity.DayPlan;
 import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
-import com.tngtied.triplaner.repository.dayplan_repository;
-import com.tngtied.triplaner.repository.plan_repository;
+import com.tngtied.triplaner.repository.DayPlanRepository;
+import com.tngtied.triplaner.repository.PlanRepository;
+import com.tngtied.triplaner.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api/v1/trip")
 public class MapController {
 
-    private static final String base_mapping = "/api/v1/trip";
+    //private static final String base_mapping = "/api/v1/trip";
 
     @Value("${NAVER-KEY}")
     private String naverKey;
@@ -41,20 +41,21 @@ public class MapController {
 
     @Autowired
     public TripService tripService;
+//    @Autowired
+//    public MemberService memberService;
 
     @Autowired
-    public plan_repository plan_repo;
-
+    public PlanRepository plan_repo;
     @Autowired
-    public dayplan_repository day_repo;
+    public DayPlanRepository day_repo;
 
-    @GetMapping(base_mapping + "s")
+    @GetMapping("s")
     public List<TripThumbnailDTO> trip_list() {
 
         return plan_repo.findThumbnails();
     }
 
-    @PostMapping(base_mapping)
+    @PostMapping()
     public Plan initiate_trip(@RequestBody InitiateTripRequestDTO trip_dto) {
         Plan plan_instance = new Plan();
         plan_instance.title = trip_dto.title;
@@ -65,7 +66,7 @@ public class MapController {
         return (plan_instance);
     }
 
-     @GetMapping(base_mapping+"/{id}")
+     @GetMapping("/{id}")
      public Plan get_plan(@PathVariable int id){
         Plan p = plan_repo.findById(id).orElse(null);
         if (p==null){System.out.println("found plan was null");}
@@ -73,7 +74,7 @@ public class MapController {
         return(p);
      }
 
-     @PutMapping(base_mapping+"/{id}/{date}")
+     @PutMapping("/{id}/{date}")
      public DayPlan putTimePlan(@PathVariable long id, @PathVariable String date, @RequestBody TimePlan newTimePlan){
         LocalDate pathDate = LocalDate.parse(date);
         if (pathDate == null){return null;}
@@ -85,7 +86,7 @@ public class MapController {
         return  dayPlanFound;
      }
 
-    @PostMapping(base_mapping+"geocode")
+    @PostMapping("/geocode")
     public Place addressToCoord(@RequestBody HashMap<String, Object> map) throws IOException {
         URL url = new URL("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(map.get("address").toString(), "utf-8"));
         System.out.println("url is: "+ url.toString());
@@ -118,15 +119,6 @@ public class MapController {
              }
          }else{
              inputStreamReader = new InputStreamReader(geoCon.getInputStream(), "utf-8");
-
-//             String resultMessage = tripService.readFromReader(inputStreamReader);
-//             System.out.println("message from naver is: ");
-//             System.out.println(resultMessage);
-//             JsonObject jsonObject = new Gson().fromJson(resultMessage, JsonObject.class);
-//
-//             Place p = new Place();
-//             p.longitude = Double.valueOf(jsonObject.get("addresses").getAsJsonArray()[0].x);\
-
              JsonReader jsonReader = new JsonReader(inputStreamReader);
              jsonReader.setLenient(true);
              NGeocodeDTO nGeocodeDTO = gson.fromJson(jsonReader, NGeocodeDTO.class);
@@ -135,3 +127,5 @@ public class MapController {
          }
      }
 }
+
+

@@ -5,10 +5,9 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.Date;
 
 @Repository
-public interface dayplan_repository extends CrudRepository<DayPlan, Integer> {
+public interface DayPlanRepository extends CrudRepository<DayPlan, Integer> {
 
 //    String ByIdAndDate = "SELECT * " +
 //            "FROM DayPlan d " +

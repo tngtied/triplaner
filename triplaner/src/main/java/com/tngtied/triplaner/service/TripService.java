@@ -1,4 +1,4 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,10 +13,10 @@ import com.tngtied.triplaner.entity.DayPlan;
 import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
-import com.tngtied.triplaner.repository.dayplan_repository;
-import com.tngtied.triplaner.repository.place_repository;
-import com.tngtied.triplaner.repository.plan_repository;
-import com.tngtied.triplaner.repository.timeplan_repository;
+import com.tngtied.triplaner.repository.DayPlanRepository;
+import com.tngtied.triplaner.repository.PlaceRepository;
+import com.tngtied.triplaner.repository.PlanRepository;
+import com.tngtied.triplaner.repository.TimePlanRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,13 +25,13 @@ import org.springframework.transaction.annotation.Transactional;
 public class TripService {
 
   @Autowired
-  public plan_repository plan_repo;
+  public PlanRepository plan_repo;
   @Autowired
-  public dayplan_repository day_repo;
+  public DayPlanRepository day_repo;
   @Autowired
-  public timeplan_repository time_repo;
+  public TimePlanRepository time_repo;
   @Autowired
-  public place_repository place_repo;
+  public PlaceRepository place_repo;
 
 
   public TimePlan makeTimeplan(int j){

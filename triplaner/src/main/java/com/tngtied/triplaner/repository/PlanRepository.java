@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface plan_repository extends JpaRepository<Plan, Integer> {
+public interface PlanRepository extends JpaRepository<Plan, Integer> {
 
     @Query(value = "SELECT p.TITLE, p.START_DATE AS startDate, p.END_DATE AS endDate FROM Plan p", nativeQuery = true)
     public List<TripThumbnailDTO> findThumbnails();

@@ -5,6 +5,6 @@ import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface timeplan_repository extends CrudRepository<TimePlan, Integer> {
+public interface TimePlanRepository extends CrudRepository<TimePlan, Integer> {
 
 }
