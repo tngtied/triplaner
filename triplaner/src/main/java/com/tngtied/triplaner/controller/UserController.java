@@ -5,6 +5,7 @@ import com.tngtied.triplaner.dto.UserValidationErrorDTO;
 import com.tngtied.triplaner.dto.UserValidationFieldError;
 import com.tngtied.triplaner.entity.SiteUser;
 import com.tngtied.triplaner.service.UserService;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
@@ -53,11 +54,14 @@ public class UserController {
             try {
                 userService.create(siteUser.getUsername(), siteUser.getEmail(), siteUser.getPassword());
             }catch (Exception e){
-
-                if (e.getClass().equals())
                 userValidationErrorDTO.setHasErr(true);
+                if (e.getClass().equals(ConstraintViolationException.class)){
+                    userValidationErrorDTO.fieldErrorList.add(new UserValidationFieldError("password", e.getMessage()));
+                }else{
+                    userValidationErrorDTO.objectErrorList.add(e.getLocalizedMessage());
+                }
+
                 //e.printStackTrace();
-                userValidationErrorDTO.objectErrorList.add(e.getLocalizedMessage());
                 return userValidationErrorDTO;
             }
             userValidationErrorDTO.setHasErr(false);

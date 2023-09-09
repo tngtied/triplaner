@@ -21,7 +21,7 @@ public class UserService {
         siteUser.setEmail(email);
 
         if (password.length()<8 || password.length()>20){
-            throw new ConstraintViolationException("password length must be between 8 and 20", null);
+            throw new ConstraintViolationException("size", null);
         }
 
         siteUser.setPassword(passwordEncoder.encode(password));

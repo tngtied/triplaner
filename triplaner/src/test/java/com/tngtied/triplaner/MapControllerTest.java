@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.entity.TimePlan;
+import com.tngtied.triplaner.service.TripService;
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,7 +32,7 @@ class MapControllerTest {
     @Autowired
     public TripService tripService;
 
-    public String objectToJson(Object obj) {
+    String objectToJson(Object obj) {
         try {
             return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(obj);
         } catch (Exception e) {

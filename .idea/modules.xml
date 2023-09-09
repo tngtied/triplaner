@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/com.tngtied.triplaner.main.iml" filepath="$PROJECT_DIR$/.idea/modules/com.tngtied.triplaner.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/triplaner.iml" filepath="$PROJECT_DIR$/.idea/triplaner.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/triplaner.triplaner.main.iml" filepath="$PROJECT_DIR$/.idea/modules/triplaner.triplaner.main.iml" />
     </modules>
