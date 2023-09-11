@@ -8,6 +8,7 @@ import com.tngtied.triplaner.service.UserService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.sound.midi.SysexMessage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Controller
@@ -45,7 +48,7 @@ public class UserController {
                     userValidationErrorDTO.fieldErrorList.add(new UserValidationFieldError(fieldError.getField(), fieldError.getCode().toString()));
                 }
                 else{
-                    userValidationErrorDTO.objectErrorList.add(err.getDefaultMessage().toString());
+                    userValidationErrorDTO.objectErrorList.add(Pattern.compile("(\\w*)$").matcher(err.getClass().toString()).group(1));
                 }
             }
         }
@@ -58,16 +61,25 @@ public class UserController {
                 if (e.getClass().equals(ConstraintViolationException.class)){
                     userValidationErrorDTO.fieldErrorList.add(new UserValidationFieldError("password", e.getMessage()));
                 }else{
-                    userValidationErrorDTO.objectErrorList.add(e.getLocalizedMessage());
+                    System.out.printf(">>error class: %s\n", e.getClass().toString());
+                    System.out.printf("%s\n", e.getCause().toString());
+                    //regex pattern matching
+
+                    if (e.getClass().equals(DataIntegrityViolationException.class)){
+                        Matcher matcher = Pattern.compile("(^.*SITE_USER\\()(\\w*)").matcher(e.getCause().toString());
+                        if (matcher.find()){
+                            userValidationErrorDTO.fieldErrorList.add(new UserValidationFieldError(matcher.group(2), "Integrity"));
+                            System.out.printf(">>pattern found: %s\n", matcher.group(2));
+                            return userValidationErrorDTO;
+                        }
+                    }
+                    userValidationErrorDTO.objectErrorList.add(Pattern.compile("(\\w*)$").matcher(e.getClass().toString()).group(1));
                 }
 
-                //e.printStackTrace();
                 return userValidationErrorDTO;
             }
             userValidationErrorDTO.setHasErr(false);
         }
-
-        //System.out.printf("[DTO object] hasErr %b\n", userValidationErrorDTO.HasErr);
 
         return userValidationErrorDTO;
     }

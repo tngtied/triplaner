@@ -36,7 +36,7 @@ class UserControllerTest {
         SiteUser siteUser = new SiteUser();
         siteUser.setUsername("test");
         siteUser.setPassword("password");
-        siteUser.setEmail("Email@gmail.com");
+        siteUser.setEmail("email@gmail.com");
         return siteUser;
     }
 
@@ -94,11 +94,14 @@ class UserControllerTest {
     @DisplayName("Test: post signup duplicate field [email]")
     void signupTestDuplicateEmail() throws Exception {
         signupMvc(objectToJson(makeValidUser()).toString());
-        String jsonString = "{\"username\": \"username11\", \"password\": \"password1\", \"email\":\"email@gmail.com\"}";
+        String jsonString = "{\"username\": \"usernama\", \"password\": \"password1\", \"email\":\"email@gmail.com\"}";
         signupMvc(jsonString);
     }
 
     @Test
     void login() {
+
+
+
     }
 }
