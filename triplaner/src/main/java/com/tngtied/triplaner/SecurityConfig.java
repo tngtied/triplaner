@@ -41,7 +41,6 @@ public class SecurityConfig {
     //WebSecurityConfigurerAdapter is deprecated
 
     private final UserRepository userRepository;
-    private final authenticationJwtTokenFilter jwtTokenFilter;
 
     @Value("${jwt.public.key}")
     private RSAPublicKey rsaPublicKey;
