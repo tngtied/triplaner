@@ -21,11 +21,12 @@ public class UserService {
         siteUser.setEmail(email);
 
         if (password.length()<8 || password.length()>20){
-            throw new ConstraintViolationException("size", null);
+            throw new ConstraintViolationException("Size", null);
         }
 
         siteUser.setPassword(passwordEncoder.encode(password));
         this.userRepository.save(siteUser);
+        System.out.printf(">>user creation success with username %s, email %s\n", siteUser.getUsername(), siteUser.getEmail());
         return siteUser;
     }
 }

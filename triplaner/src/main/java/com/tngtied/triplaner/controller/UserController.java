@@ -57,6 +57,7 @@ public class UserController {
             try {
                 userService.create(siteUser.getUsername(), siteUser.getEmail(), siteUser.getPassword());
             }catch (Exception e){
+                System.out.println(">>caught exception");
                 userValidationErrorDTO.setHasErr(true);
                 if (e.getClass().equals(ConstraintViolationException.class)){
                     userValidationErrorDTO.fieldErrorList.add(new UserValidationFieldError("password", e.getMessage()));

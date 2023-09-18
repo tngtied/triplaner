@@ -6,6 +6,7 @@ import com.tngtied.triplaner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -35,7 +36,7 @@ public class UserSecurityService implements UserDetailsService {
             authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
         }
 
-        return new org.springframework.security.core.userdetails.User(siteUserFound.getUsername(), siteUserFound.getPassword(), authorities);
+        return new User(siteUserFound.getUsername(), siteUserFound.getPassword(), authorities);
 
     }
 

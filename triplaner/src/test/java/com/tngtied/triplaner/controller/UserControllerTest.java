@@ -4,23 +4,25 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.google.gson.JsonObject;
 import com.tngtied.triplaner.entity.SiteUser;
 import com.tngtied.triplaner.service.UserService;
+import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
-import com.google.gson.JsonParser;
-
+import jakarta.servlet.http.HttpServletRequest.*;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 @SpringBootTest
+@Transactional
 @AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
     private static final String base_mapping = "/api/v1/user";
@@ -68,18 +70,20 @@ class UserControllerTest {
     @DisplayName("Test: post signup invalid field [username field]")
     void signupTestInvalidUsername() throws Exception {
         String jsonString = "{\"username\": \"a\", \"password\": \"password\", \"email\":\"email@gmail.com\"}";
-        //JsonParser jsonParser = new JsonParser();
-        //JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonString);
         signupMvc(jsonString);
+
+        //response body
+        //{"hasErr":true,"fieldErrorList":[{"field":"username","error":"Size"}],"objectErrorList":[]}
     }
 
     @Test
     @DisplayName("Test: post signup invalid field [password field]")
     void signupTestInvalidPassword() throws Exception {
         String jsonString = "{\"username\": \"username\", \"password\": \"pass\", \"email\":\"email@gmail.com\"}";
-        //JsonParser jsonParser = new JsonParser();
-        //JsonObject jsonObject = (JsonObject) jsonParser.parse(jsonString);
         signupMvc(jsonString);
+
+        //response body
+        //{"hasErr":true,"fieldErrorList":[{"field":"password","error":"Size"}],"objectErrorList":[]}
     }
 
     @Test
@@ -94,14 +98,26 @@ class UserControllerTest {
     @DisplayName("Test: post signup duplicate field [email]")
     void signupTestDuplicateEmail() throws Exception {
         signupMvc(objectToJson(makeValidUser()).toString());
-        String jsonString = "{\"username\": \"usernama\", \"password\": \"password1\", \"email\":\"email@gmail.com\"}";
+        String jsonString = "{\"username\": \"test1\", \"password\": \"password1\", \"email\":\"email@gmail.com\"}";
         signupMvc(jsonString);
     }
 
+    /*
     @Test
-    void login() {
+    void loginTestSuccess() throws Exception {
+        //진짜어떻겧하는지모르겟다 일단스킵
+        MockMvcRequestBuilders requestBuilders =
+        mockMvc.perform(p(base_mapping+"/login")
+                        .param("username", "test")
+                        .param("password", "password"))
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+     */
 
-
+    @Test
+    void SessionTestSuccess() throws Exception{
 
     }
+
 }

@@ -19,7 +19,18 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
 	implementation "org.springframework.boot:spring-boot-starter-security"
+	implementation 'org.springframework.security:spring-security-oauth2-resource-server:6.1.0'
+	implementation 'org.springframework.security:spring-security-oauth2-core:6.1.0'
+	implementation 'org.springframework.security:spring-security-oauth2-jose:6.1.0'
+
+	implementation 'com.nimbusds:nimbus-jose-jwt:9.34'
+	implementation 'io.jsonwebtoken:jjwt:0.9.1'
+
+
+
+
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.1.2.RELEASE'
 	implementation "org.hibernate.validator:hibernate-validator:"
 
