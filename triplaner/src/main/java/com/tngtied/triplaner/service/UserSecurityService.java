@@ -4,6 +4,7 @@ import com.tngtied.triplaner.UserRole;
 import com.tngtied.triplaner.entity.SiteUser;
 import com.tngtied.triplaner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;

@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import com.nimbusds.jose.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.oauth2.server.resource.*;
 
@@ -29,10 +30,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -41,34 +47,38 @@ public class SecurityConfig {
     //WebSecurityConfigurerAdapter is deprecated
 
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    @Value("${jwt.public.key}")
-    private RSAPublicKey rsaPublicKey;
 
     @Value("${jwt.private.key}")
     private RSAPrivateKey rsaPrivateKey;
 
-    String pattern = "/api/v1/**";
+    @Value("$path.base.triplaner")
+    private String trip_base_path;
+
+    @Value("$path.base")
+    private String base_path;
 
     //나중에 허용할 url 취합해서 넣기
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests.requestMatchers(new AntPathRequestMatcher(pattern)).permitAll())
-                //.csrf(AbstractHttpConfigurer::disable)
-                .logout((logout) -> logout.logoutRequestMatcher(new AntPathRequestMatcher("/api/v1/user/logout"))
-                        .logoutSuccessUrl("/")
-                        .invalidateHttpSession(true)
-                );
-
         // Set up oauth2 resource server
         http.httpBasic(Customizer.withDefaults());
+
         http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwtConfigurer -> jwtConfigurer
                         .jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
-
         // Set session management to stateless
-        http.sessionManagement(configurer -> configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .securityMatcher("/user/login", "/user/logout")
+                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+                        .requestMatchers(new AntPathRequestMatcher(trip_base_path+"/home"),
+                                        new AntPathRequestMatcher(trip_base_path+"/login"),
+                                        new AntPathRequestMatcher(trip_base_path+"logout")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher(base_path)).authenticated())
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                //.csrf(AbstractHttpConfigurer::disable)
 
         return http.build();
     }
@@ -77,13 +87,16 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-
+//도메인 사면 cors 셋업하기
 //    @Bean
-//    public DaoAuthenticationProvider authenticationProvider(){
-//        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
-//        daoAuthenticationProvider.setUserDetailsService();
-//        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
-//    }S
+//    CorsConfigurationSource corsConfigurationSource() {
+//        CorsConfiguration configuration = new CorsConfiguration();
+//        configuration.setAllowedOrigins(Arrays.asList("https://example.com"));
+//        configuration.setAllowedMethods(Arrays.asList("GET","POST"));
+//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+//        source.registerCorsConfiguration("/**", configuration);
+//        return source;
+//    }
 
     @Bean
     public JwtEncoder jwtEncoder() {

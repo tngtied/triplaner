@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/trip")
+@RequestMapping("${triplaner.path.base}")
 public class MapController {
 
     //private static final String base_mapping = "/api/v1/trip";
@@ -49,9 +49,13 @@ public class MapController {
     @Autowired
     public DayPlanRepository day_repo;
 
+    @GetMapping("/home")
+    public void home_get(){
+
+    }
+
     @GetMapping("s")
     public List<TripThumbnailDTO> trip_list() {
-
         return plan_repo.findThumbnails();
     }
 
