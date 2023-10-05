@@ -23,7 +23,7 @@ public class UserSecurityService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<Member> user = this.userRepository.findByusername(username);
+        Optional<Member> user = this.userRepository.findByUsername(username);
         if (user.isEmpty()){
             throw new UsernameNotFoundException("SiteUser not found.");
         }

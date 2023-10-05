@@ -31,10 +31,7 @@ class UserControllerTest {
 
 
     Member makeValidUser(){
-        Member siteUser = new Member();
-        siteUser.setUsername("test");
-        siteUser.setPassword("password");
-        siteUser.setEmail("email@gmail.com");
+        Member siteUser = new Member("test", "password","USER", "email@gmail.com");
         return siteUser;
     }
 

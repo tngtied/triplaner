@@ -71,7 +71,7 @@ public class SecurityConfig {
 
         // Set session management to stateless
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .securityMatcher("/user/login", "/user/logout")
+                .securityMatcher(trip_base_path+"/user/login", "/user/logout", "/user/signup")
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers(new AntPathRequestMatcher(trip_base_path+"/home"),
                                         new AntPathRequestMatcher(trip_base_path+"/login"),
