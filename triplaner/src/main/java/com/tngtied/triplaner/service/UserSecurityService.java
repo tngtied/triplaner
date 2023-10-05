@@ -1,10 +1,9 @@
 package com.tngtied.triplaner.service;
 
 import com.tngtied.triplaner.UserRole;
-import com.tngtied.triplaner.entity.SiteUser;
+import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -24,11 +23,11 @@ public class UserSecurityService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<SiteUser> user = this.userRepository.findByusername(username);
+        Optional<Member> user = this.userRepository.findByusername(username);
         if (user.isEmpty()){
             throw new UsernameNotFoundException("SiteUser not found.");
         }
-        SiteUser siteUserFound = user.get();
+        Member siteUserFound = user.get();
         List<GrantedAuthority> authorities = new ArrayList<>();
 
         if ("admin".equals(siteUserFound.getUsername())){

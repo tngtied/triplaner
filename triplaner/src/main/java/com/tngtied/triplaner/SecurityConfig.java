@@ -65,9 +65,9 @@ public class SecurityConfig {
         // Set up oauth2 resource server
         http.httpBasic(Customizer.withDefaults());
 
-        http.oauth2ResourceServer(oauth2 -> oauth2
-                .jwt(jwtConfigurer -> jwtConfigurer
-                        .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+//        http.oauth2ResourceServer(oauth2 -> oauth2
+//                .jwt(jwtConfigurer -> jwtConfigurer
+//                        .jwtAuthenticationConverter(jwtAuthenticationConverter())));
 
         // Set session management to stateless
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -87,7 +87,7 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
-//도메인 사면 cors 셋업하기
+//도메인 사면 cors 셋업
 //    @Bean
 //    CorsConfigurationSource corsConfigurationSource() {
 //        CorsConfiguration configuration = new CorsConfiguration();
@@ -97,33 +97,33 @@ public class SecurityConfig {
 //        source.registerCorsConfiguration("/**", configuration);
 //        return source;
 //    }
-
-    @Bean
-    public JwtEncoder jwtEncoder() {
-        var jwk = new RSAKey.Builder(this.rsaPublicKey).privateKey(this.rsaPrivateKey).build();
-        var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
-        return new NimbusJwtEncoder(jwks);
-    }
-
-
-    // Used by JwtAuthenticationProvider to decode and validate JWT tokens
-    @Bean
-    public JwtDecoder jwtDecoder() {
-        return NimbusJwtDecoder.withPublicKey(this.rsaPublicKey).build();
-    }
-
-
-    // Extract authorities from the roles claim
-    @Bean
-    public JwtAuthenticationConverter jwtAuthenticationConverter() {
-        var jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-
-        var jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
-        return jwtAuthenticationConverter;
-    }
+//
+//    @Bean
+//    public JwtEncoder jwtEncoder() {
+//        var jwk = new RSAKey.Builder(this.rsaPublicKey).privateKey(this.rsaPrivateKey).build();
+//        var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+//        return new NimbusJwtEncoder(jwks);
+//    }
+//
+//
+//    // Used by JwtAuthenticationProvider to decode and validate JWT tokens
+//    @Bean
+//    public JwtDecoder jwtDecoder() {
+//        return NimbusJwtDecoder.withPublicKey(this.rsaPublicKey).build();
+//    }
+//
+//
+//    // Extract authorities from the roles claim
+//    @Bean
+//    public JwtAuthenticationConverter jwtAuthenticationConverter() {
+//        var jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
+//        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+//        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
+//
+//        var jwtAuthenticationConverter = new JwtAuthenticationConverter();
+//        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(jwtGrantedAuthoritiesConverter);
+//        return jwtAuthenticationConverter;
+//    }
 
 
 

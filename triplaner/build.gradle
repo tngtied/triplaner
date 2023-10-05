@@ -22,7 +22,7 @@ dependencies {
 
 	implementation "org.springframework.boot:spring-boot-starter-security"
 	implementation 'org.springframework.security:spring-security-oauth2-resource-server:6.1.0'
-	implementation 'org.springframework.security:spring-security-oauth2-core:6.1.0'
+	implementation 'org.springframework.security:spring-security-oauth2-core:6.1.4'
 	implementation 'org.springframework.security:spring-security-oauth2-jose:6.1.0'
 
 	implementation 'com.nimbusds:nimbus-jose-jwt:9.34'

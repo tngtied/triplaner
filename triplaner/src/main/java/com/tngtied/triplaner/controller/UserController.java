@@ -1,13 +1,16 @@
 package com.tngtied.triplaner.controller;
 
 
+import com.tngtied.triplaner.dto.MemberLoginDTO;
+import com.tngtied.triplaner.dto.TokenInfo;
 import com.tngtied.triplaner.dto.UserValidationErrorDTO;
 import com.tngtied.triplaner.dto.UserValidationFieldError;
-import com.tngtied.triplaner.entity.SiteUser;
+import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.service.UserService;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.antlr.v4.runtime.Token;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -15,9 +18,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
-import javax.sound.midi.SysexMessage;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +34,7 @@ public class UserController {
 
     @ResponseBody
     @PostMapping("/signup")
-    public UserValidationErrorDTO signup(@RequestBody @Valid SiteUser siteUser, BindingResult bindingResult){
+    public UserValidationErrorDTO signup(@RequestBody @Valid Member siteUser, BindingResult bindingResult){
         UserValidationErrorDTO userValidationErrorDTO = new UserValidationErrorDTO();
         userValidationErrorDTO.objectErrorList = new ArrayList<String>();
         userValidationErrorDTO.fieldErrorList = new ArrayList<UserValidationFieldError>();
@@ -76,16 +77,22 @@ public class UserController {
                     }
                     userValidationErrorDTO.objectErrorList.add(Pattern.compile("(\\w*)$").matcher(e.getClass().toString()).group(1));
                 }
-
                 return userValidationErrorDTO;
             }
             userValidationErrorDTO.setHasErr(false);
         }
-
         return userValidationErrorDTO;
     }
 
     @GetMapping("/login")
-    public void login(){}
+    public TokenInfo login(@RequestBody MemberLoginDTO memberLoginDTO){
+        TokenInfo tokenInfo = userService.login(
+                memberLoginDTO.getMemberId(),
+                memberLoginDTO.getPassword()
+            );
+        return tokenInfo;
+
+
+    }
 
 }
