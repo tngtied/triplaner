@@ -50,7 +50,7 @@ public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
 
 
-    @Value("${jwt.private.key}")
+    @Value("${jwt.secret.key}")
     private RSAPrivateKey rsaPrivateKey;
 
     @Value("$path.base.triplaner")

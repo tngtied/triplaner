@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 @Table(name = "SITE_USER")
 @Getter
 @AllArgsConstructor
+@Builder
 public class Member implements UserDetails {
 
     @Id
