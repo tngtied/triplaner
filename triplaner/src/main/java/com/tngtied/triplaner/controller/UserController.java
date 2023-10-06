@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 @Controller
-@RequestMapping("/api/v1/user")
+@RequestMapping("${base.path}"+ "/user")
 public class UserController {
 
     private final UserService userService;

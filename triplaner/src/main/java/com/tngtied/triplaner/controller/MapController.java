@@ -29,7 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("${triplaner.path.base}")
+@RequestMapping("${base.path}"+"/trip")
 public class MapController {
 
     //private static final String base_mapping = "/api/v1/trip";

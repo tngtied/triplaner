@@ -51,12 +51,9 @@ public class SecurityConfig {
 
 
     @Value("${jwt.secret.key}")
-    private RSAPrivateKey rsaPrivateKey;
+    private String rsaPrivateKey;
 
-    @Value("$path.base.triplaner")
-    private String trip_base_path;
-
-    @Value("$path.base")
+    @Value("$base.path")
     private String base_path;
 
     //나중에 허용할 url 취합해서 넣기
@@ -71,11 +68,11 @@ public class SecurityConfig {
 
         // Set session management to stateless
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .securityMatcher(trip_base_path+"/user/login", "/user/logout", "/user/signup")
+                //.securityMatcher(base_path+"/user/login", base_path+"/user/logout", "/user/signup")
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
-                        .requestMatchers(new AntPathRequestMatcher(trip_base_path+"/home"),
-                                        new AntPathRequestMatcher(trip_base_path+"/login"),
-                                        new AntPathRequestMatcher(trip_base_path+"logout")).permitAll()
+                        .requestMatchers(new AntPathRequestMatcher(base_path+"/home"),
+                                        new AntPathRequestMatcher(base_path+"/user/login"),
+                                        new AntPathRequestMatcher(base_path+"/user/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(base_path)).authenticated())
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
                 //.csrf(AbstractHttpConfigurer::disable)

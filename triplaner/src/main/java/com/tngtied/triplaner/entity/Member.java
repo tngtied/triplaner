@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Table(name = "SITE_USER")
 @Getter
 @AllArgsConstructor
-@Builder
 public class Member implements UserDetails {
 
     @Id
@@ -40,7 +39,6 @@ public class Member implements UserDetails {
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
     private List<String> roles = new ArrayList<>();
 
     @NotNull
@@ -51,6 +49,7 @@ public class Member implements UserDetails {
     public Member(String username, String password, String role, String email){
         this.username = username;
         this.password = password;
+        this.roles = new ArrayList<>();
         this.roles.add(role);
         this.email = email;
     }
