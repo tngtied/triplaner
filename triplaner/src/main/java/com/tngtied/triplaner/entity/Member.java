@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 //entity를 validator에 사용하는 것에 대한??
 
 @Entity
-@Table(name = "SITE_USER")
+@Table(name = "MEMBER")
 @Getter
 @AllArgsConstructor
 public class Member implements UserDetails {

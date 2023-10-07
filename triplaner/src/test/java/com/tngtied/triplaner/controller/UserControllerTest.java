@@ -6,7 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.tngtied.triplaner.entity.Member;
+import com.tngtied.triplaner.dto.UserSignupDTO;
 import com.tngtied.triplaner.service.UserService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -33,8 +33,8 @@ class UserControllerTest {
     private UserService userService;
 
 
-    Member makeValidUser(){
-        Member siteUser = new Member("test", "password","USER", "email@gmail.com");
+    UserSignupDTO makeValidUser(){
+        UserSignupDTO siteUser = new UserSignupDTO("test", "password", "email@gmail.com");
         return siteUser;
     }
 
@@ -86,15 +86,16 @@ class UserControllerTest {
     @Test
     @DisplayName("Test: post signup duplicate field [username]")
     void signupTestDuplicateUsername() throws Exception {
-        signupMvc(objectToJson(makeValidUser()).toString());
-        String jsonString = "{\"username\": \"test\", \"password\": \"password1\", \"email\":\"emailmail@gmail.com\"}";
-        signupMvc(jsonString);
+        signupMvc(objectToJson(makeValidUser()));
+        signupMvc(objectToJson(makeValidUser()));
+//        String jsonString = "{\"username\": \"test\", \"password\": \"password1\", \"email\":\"emailmail@gmail.com\"}";
+//        signupMvc(jsonString);
     }
 
     @Test
     @DisplayName("Test: post signup duplicate field [email]")
     void signupTestDuplicateEmail() throws Exception {
-        signupMvc(objectToJson(makeValidUser()).toString());
+        signupMvc(objectToJson(makeValidUser()));
         String jsonString = "{\"username\": \"test1\", \"password\": \"password1\", \"email\":\"email@gmail.com\"}";
         signupMvc(jsonString);
     }

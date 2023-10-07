@@ -23,13 +23,8 @@ public class UserService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public Member create(String userName, String email, String password) throws ConstraintViolationException {
-
-        if (password.length()<8 || password.length()>20){
-            throw new ConstraintViolationException("Size", null);
-        }
+    public Member create(String userName, String email, String password) {
         Member siteUser = new Member(userName, passwordEncoder.encode(password), "USER", email);
-
         this.userRepository.save(siteUser);
         System.out.printf(">>user creation success with username %s, email %s\n", siteUser.getUsername(), siteUser.getEmail());
         return siteUser;
