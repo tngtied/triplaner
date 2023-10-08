@@ -7,6 +7,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tngtied.triplaner.dto.UserSignupDTO;
+import com.tngtied.triplaner.entity.Member;
+import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.UserService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +20,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Optional;
+
 @SpringBootTest
 @Transactional
 @AutoConfigureMockMvc(addFilters = false)
@@ -28,6 +32,9 @@ class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private UserService userService;
@@ -87,6 +94,8 @@ class UserControllerTest {
     @DisplayName("Test: post signup duplicate field [username]")
     void signupTestDuplicateUsername() throws Exception {
         signupMvc(objectToJson(makeValidUser()));
+        Optional<Member> m = userRepository.findByUsername("test");
+        System.out.println(m.toString());
         signupMvc(objectToJson(makeValidUser()));
 //        String jsonString = "{\"username\": \"test\", \"password\": \"password1\", \"email\":\"emailmail@gmail.com\"}";
 //        signupMvc(jsonString);

@@ -61,17 +61,21 @@ public class UserController {
                 System.out.println(">>caught exception");
                 userValidationErrorDTO.setHasErr(true);
                 System.out.printf(">>error class: %s\n", e.getClass().toString());
-                System.out.printf("%s\n", e.getCause().toString());
+
                 //regex pattern matching
 
                 if (e.getClass().equals(DataIntegrityViolationException.class)){
-                    Matcher matcher = Pattern.compile("(^.*SITE_USER\\()(\\w*)").matcher(e.getCause().toString());
-                    if (matcher.find()){
-                        userValidationErrorDTO.fieldErrorList.add(new UserValidationFieldError(matcher.group(2), "Integrity"));
-                        System.out.printf(">>pattern found: %s\n", matcher.group(2));
-                        return userValidationErrorDTO;
-                    }
+                    System.out.println(">>DataIntegrityViolationException");
+//                    Matcher matcher = Pattern.compile("(^.*MEMBER\\()(\\w*)").matcher(e.getCause().toString());
+//                    if (matcher.find()){
+//                        userValidationErrorDTO.fieldErrorList.add(new UserValidationFieldError(matcher.group(2), "DUPLICATE"));
+//                        System.out.printf(">>pattern found: %s\n", matcher.group(2));
+//                        return userValidationErrorDTO;
+//                    }
+                    userValidationErrorDTO.fieldErrorList.add(new UserValidationFieldError(e.getMessage(), "DUPLICATE"));
+                    return userValidationErrorDTO;
                 }
+                System.out.println(">>objectErrorList");
                 userValidationErrorDTO.objectErrorList.add(Pattern.compile("(\\w*)$").matcher(e.getClass().toString()).group(1));
                 return userValidationErrorDTO;
             }

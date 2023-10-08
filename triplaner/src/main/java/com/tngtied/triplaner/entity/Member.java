@@ -91,4 +91,12 @@ public class Member implements UserDetails {
         return true;
     }
 
+    @Override
+    public String toString(){
+        String returnString = "username: " + this.username
+                + " | email: " + this.email
+                + " | roles: " + this.roles.toString();
+        return returnString;
+    }
+
 }

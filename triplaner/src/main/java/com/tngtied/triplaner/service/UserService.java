@@ -4,14 +4,18 @@ import com.tngtied.triplaner.JwtTokenProvider;
 import com.tngtied.triplaner.dto.TokenInfo;
 import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.repository.UserRepository;
-import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.exception.ConstraintViolationException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.sql.SQLException;
+import java.sql.SQLIntegrityConstraintViolationException;
 
 @RequiredArgsConstructor
 @Service
@@ -24,6 +28,14 @@ public class UserService {
     private final JwtTokenProvider jwtTokenProvider;
 
     public Member create(String userName, String email, String password) {
+        if (userRepository.findByUsername(userName).isPresent()){
+            System.out.println(">>"+userRepository.findByUsername(userName).toString());
+            throw  new DataIntegrityViolationException("USERNAME");
+        }
+        if (userRepository.findByEmail(email).isPresent()){
+            throw  new DataIntegrityViolationException("EMAIL");
+        }
+
         Member siteUser = new Member(userName, passwordEncoder.encode(password), "USER", email);
         this.userRepository.save(siteUser);
         System.out.printf(">>user creation success with username %s, email %s\n", siteUser.getUsername(), siteUser.getEmail());
