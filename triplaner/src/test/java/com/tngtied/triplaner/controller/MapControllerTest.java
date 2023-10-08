@@ -1,4 +1,4 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.controller;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;

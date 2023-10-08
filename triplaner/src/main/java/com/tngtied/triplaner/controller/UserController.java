@@ -2,14 +2,10 @@ package com.tngtied.triplaner.controller;
 
 
 import com.tngtied.triplaner.dto.*;
-import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.service.UserService;
-import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.antlr.v4.runtime.Token;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -17,7 +13,6 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
@@ -85,14 +80,12 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public TokenInfo login(@RequestBody MemberLoginDTO memberLoginDTO){
+    public TokenInfo login(@RequestBody UserLoginDTO userLoginDTO){
         TokenInfo tokenInfo = userService.login(
-                memberLoginDTO.getMemberId(),
-                memberLoginDTO.getPassword()
+                userLoginDTO.getUsername(),
+                userLoginDTO.getPassword()
             );
         return tokenInfo;
-
-
     }
 
 }

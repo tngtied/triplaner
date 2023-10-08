@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.tngtied.triplaner.dto.UserLoginDTO;
 import com.tngtied.triplaner.dto.UserSignupDTO;
 import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.repository.UserRepository;
@@ -39,6 +40,7 @@ class UserControllerTest {
     @Autowired
     private UserService userService;
 
+    public MapControllerTest mapControllerTest;
 
     UserSignupDTO makeValidUser(){
         UserSignupDTO siteUser = new UserSignupDTO("test", "password", "email@gmail.com");
@@ -66,7 +68,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Test: post signup valid")
     void signupTestValid() throws Exception{
-        String siteUser = objectToJson(makeValidUser()).toString();
+        String siteUser = objectToJson(makeValidUser());
         signupMvc(siteUser);
     }
 
@@ -109,18 +111,21 @@ class UserControllerTest {
         signupMvc(jsonString);
     }
 
-    /*
+
     @Test
     void loginTestSuccess() throws Exception {
+
         //진짜어떻겧하는지모르겟다 일단스킵
-        MockMvcRequestBuilders requestBuilders =
-        mockMvc.perform(p(base_mapping+"/login")
-                        .param("username", "test")
-                        .param("password", "password"))
+        signupMvc(objectToJson(makeValidUser()));
+        UserLoginDTO loginDTO = new UserLoginDTO("test", "password");
+        mockMvc.perform(post(base_path+"/login")
+                        .content(objectToJson(loginDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
+        mapControllerTest.planListPostTest();
     }
-     */
+
 
     @Test
     void SessionTestSuccess() throws Exception{
