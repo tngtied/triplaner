@@ -74,8 +74,9 @@ public class SecurityConfig {
                                         new AntPathRequestMatcher(base_path+"/user/login"),
                                         new AntPathRequestMatcher(base_path+"/user/signup")).permitAll()
                         .requestMatchers(new AntPathRequestMatcher(base_path)).authenticated())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 //.csrf(AbstractHttpConfigurer::disable)
+                ;
 
         return http.build();
     }

@@ -14,17 +14,22 @@ import com.tngtied.triplaner.service.UserService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Optional;
 
 @SpringBootTest
 @Transactional
+
 @AutoConfigureMockMvc(addFilters = false)
 class UserControllerTest {
 
@@ -42,6 +47,8 @@ class UserControllerTest {
 
     public MapControllerTest mapControllerTest;
 
+    @MockBean
+    private AuthenticationManagerBuilder authenticationManagerBuilder;
     UserSignupDTO makeValidUser(){
         UserSignupDTO siteUser = new UserSignupDTO("test", "password", "email@gmail.com");
         return siteUser;
@@ -117,8 +124,9 @@ class UserControllerTest {
 
         //진짜어떻겧하는지모르겟다 일단스킵
         signupMvc(objectToJson(makeValidUser()));
+        System.out.println(">> make valid user complete");
         UserLoginDTO loginDTO = new UserLoginDTO("test", "password");
-        mockMvc.perform(post(base_path+"/login")
+        mockMvc.perform(post(base_path+"/user/login")
                         .content(objectToJson(loginDTO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
