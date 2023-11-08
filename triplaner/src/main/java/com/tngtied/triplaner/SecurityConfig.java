@@ -1,17 +1,11 @@
 package com.tngtied.triplaner;
 
 
-import com.nimbusds.jose.jwk.JWKSet;
-import com.nimbusds.jose.jwk.RSAKey;
-import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
-import com.nimbusds.jose.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.oauth2.jwt.*;
-import org.springframework.security.oauth2.server.resource.*;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
-import com.nimbusds.jose.jwk.source.JWKSource;
-import com.tngtied.triplaner.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +23,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -46,8 +41,9 @@ import java.util.Arrays;
 public class SecurityConfig {
     //WebSecurityConfigurerAdapter is deprecated
 
-    private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final UserDetailsService userDetailsService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
 
     @Value("${jwt.secret.key}")
@@ -72,9 +68,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
                         .requestMatchers(new AntPathRequestMatcher(base_path+"/home"),
                                         new AntPathRequestMatcher(base_path+"/user/login"),
-                                        new AntPathRequestMatcher(base_path+"/user/signup")).permitAll()
+                                        new AntPathRequestMatcher(base_path+"/user/signup"))
+                        .permitAll()
                         .requestMatchers(new AntPathRequestMatcher(base_path)).authenticated())
-                .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 //.csrf(AbstractHttpConfigurer::disable)
                 ;
 
@@ -126,8 +123,10 @@ public class SecurityConfig {
 
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
-        return authenticationConfiguration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(HttpSecurity httpSecurity) throws Exception{
+        AuthenticationManagerBuilder authenticationManagerBuilder = httpSecurity.getSharedObject(AuthenticationManagerBuilder.class);
+        authenticationManagerBuilder.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
+        return authenticationManagerBuilder.build();
         //TODO Expose authentication manager bean
     }
 
