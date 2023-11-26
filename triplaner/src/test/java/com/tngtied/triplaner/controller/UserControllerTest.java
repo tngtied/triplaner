@@ -10,7 +10,7 @@ import com.tngtied.triplaner.dto.UserLoginDTO;
 import com.tngtied.triplaner.dto.UserSignupDTO;
 import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.repository.UserRepository;
-import com.tngtied.triplaner.service.UserService;
+import com.tngtied.triplaner.service.UserDetailsServiceImpl;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -43,7 +43,7 @@ class UserControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    private UserService userService;
+    private UserDetailsServiceImpl userService;
 
     public MapControllerTest mapControllerTest;
 

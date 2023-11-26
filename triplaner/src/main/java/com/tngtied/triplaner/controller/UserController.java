@@ -2,10 +2,8 @@ package com.tngtied.triplaner.controller;
 
 
 import com.tngtied.triplaner.dto.*;
-import com.tngtied.triplaner.service.UserService;
+import com.tngtied.triplaner.service.UserDetailsServiceImpl;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
-import lombok.Generated;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Controller;
@@ -22,7 +20,7 @@ import java.util.regex.Pattern;
 @RequestMapping("${base.path}"+ "/user")
 public class UserController {
 
-    private final UserService userService;
+    private final UserDetailsServiceImpl userService;
 
     @GetMapping("/signup")
     public void signup(){}
@@ -89,11 +87,12 @@ public class UserController {
     @PostMapping("/login")
     public TokenInfo PostLogin(@RequestBody UserLoginDTO userLoginDTO){
         System.out.println(">> Login mapping accessed");
-        TokenInfo tokenInfo = userService.login(
-                userLoginDTO.getUsername(),
-                userLoginDTO.getPassword()
-            );
-        return tokenInfo;
+        // TokenInfo tokenInfo = userService.login(
+        //         userLoginDTO.getUsername(),
+        //         userLoginDTO.getPassword()
+        //     );
+        // return tokenInfo;
+        return null;
     }
 
 }

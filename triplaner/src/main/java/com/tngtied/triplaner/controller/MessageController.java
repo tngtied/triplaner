@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 @RestController
+@RequestMapping("/api/v1")
 public class MessageController {
 
     @Autowired
