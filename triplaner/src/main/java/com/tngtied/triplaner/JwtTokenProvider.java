@@ -4,7 +4,6 @@ import com.tngtied.triplaner.dto.TokenInfo;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,18 +12,15 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.jwt.*;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.sql.Date;
 import java.sql.Time;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
-import  java.util.Base64.Decoder;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -39,16 +35,14 @@ public class JwtTokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public TokenInfo generateToken(Authentication authentication){
-        String authorities = authentication.getAuthorities().stream()
+    public TokenInfo generateToken(UserDetails user) {
+        String authorities = user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        long now = Time.valueOf(LocalTime.now()).getTime();
-
         Date accessTokenExpiresIn = Date.valueOf(LocalDate.now().plus(1, ChronoUnit.HOURS));
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(user.getUsername())
                 .claim("auth", authorities)
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -88,7 +82,8 @@ public class JwtTokenProvider {
 
     //토큰 정보를 검증하는 메서드
     public boolean validateToken(String token){
-        try {Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+        try {
+            Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             //이거 왜 method가 jws임?
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
