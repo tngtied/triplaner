@@ -64,7 +64,7 @@ class MapControllerTest {
         UserDetails userDetails = new User("username", "password", authorities);
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(userDetails);
         mockMvc.perform(post(base_mapping)
-                        .header("Authorization", "Bearer " + tokenInfo)
+                        .header("Authorization", "Bearer " + tokenInfo.getAccessToken())
                 .content(objectToJson(dto1))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON))

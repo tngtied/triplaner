@@ -62,7 +62,7 @@ public class JwtTokenProvider {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
-                .parseClaimsJwt(accessToken)
+                .parseClaimsJws(accessToken)
                 .getBody();
 
         if (claims.get("auth") ==  null){

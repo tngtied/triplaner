@@ -3,6 +3,7 @@ package com.tngtied.triplaner;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -23,13 +24,13 @@ public class SecurityConfig {
 
     // 나중에 허용할 url 취합해서 넣기
     @Bean
-    SecurityFilterChain filterDefaultChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/api/v1/**")
-                .authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
+    public FilterRegistrationBean<JwtAuthenticationFilter> filterDefaultChain(HttpSecurity http) throws Exception {
+        System.out.println(">> before jwtAuthenticationFilter...");
+        FilterRegistrationBean<JwtAuthenticationFilter> bean = new FilterRegistrationBean<>(jwtAuthenticationFilter);
+        bean.addUrlPatterns("/*");  // 모든 요청에 대해서 필터 적용
+        bean.setOrder(0);   // 낮은 숫자일수록 우선순위
 
-        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-        return http.build();
+        return bean;
     }
 
     @Bean
