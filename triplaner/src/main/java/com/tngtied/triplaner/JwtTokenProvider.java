@@ -16,10 +16,8 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.sql.Date;
-import java.sql.Time;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -40,7 +38,7 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        Date accessTokenExpiresIn = Date.valueOf(LocalDate.now().plus(1, ChronoUnit.HOURS));
+        Date accessTokenExpiresIn = (Date) Date.from(LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.ofHours(8)));
         String accessToken = Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("auth", authorities)
@@ -49,7 +47,7 @@ public class JwtTokenProvider {
                 .compact();
 
         String refreshToken = Jwts.builder()
-                .setExpiration(Date.valueOf(LocalDate.now().plus(1, ChronoUnit.HOURS)))
+                .setExpiration(Date.from(LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.ofHours(8))))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
@@ -84,7 +82,6 @@ public class JwtTokenProvider {
     public boolean validateToken(String token){
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            //이거 왜 method가 jws임?
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
             log.info("Invalid JWT Token", e);

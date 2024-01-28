@@ -45,6 +45,7 @@ class UserControllerTest {
     @Autowired
     private UserDetailsServiceImpl userService;
 
+    @Autowired
     public MapControllerTest mapControllerTest;
 
     @MockBean
@@ -103,8 +104,6 @@ class UserControllerTest {
     @DisplayName("Test: post signup duplicate field [username]")
     void signupTestDuplicateUsername() throws Exception {
         signupMvc(objectToJson(makeValidUser()));
-        Optional<Member> m = userRepository.findByUsername("test");
-        System.out.println(m.toString());
         signupMvc(objectToJson(makeValidUser()));
 //        String jsonString = "{\"username\": \"test\", \"password\": \"password1\", \"email\":\"emailmail@gmail.com\"}";
 //        signupMvc(jsonString);
