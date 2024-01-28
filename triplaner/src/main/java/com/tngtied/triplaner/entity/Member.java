@@ -27,7 +27,7 @@ public class Member implements UserDetails {
     @Id
     @GeneratedValue
     @Column(name="USERID")
-    private Long UserId;
+    private Long userid;
 
     @Column(unique = true, name = "USERNAME")
     @NotNull

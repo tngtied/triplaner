@@ -18,10 +18,7 @@ import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.dto.NGeocodeDTO;
 import com.tngtied.triplaner.dto.NGeocodeWithErrDTO;
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
-import com.tngtied.triplaner.entity.DayPlan;
-import com.tngtied.triplaner.entity.Place;
-import com.tngtied.triplaner.entity.Plan;
-import com.tngtied.triplaner.entity.TimePlan;
+import com.tngtied.triplaner.entity.*;
 import com.tngtied.triplaner.repository.DayPlanRepository;
 import com.tngtied.triplaner.repository.PlanRepository;
 import com.tngtied.triplaner.repository.UserRepository;
@@ -61,10 +58,10 @@ public class MapController {
     }
 
     @GetMapping("/list")
-    public List<TripThumbnailDTO> trip_list(@RequestHeader("Authorization") String authorization) {
+    public List<Plan> trip_list(@RequestHeader("Authorization") String authorization) {
         System.out.println(">> ${base.path}"+"/trips accessed");
-        Long UserId = userRepository.findByUsername(jwtTokenProvider.getUsername(authorization.substring(7))).get().getUserId();
-        return plan_repo.findThumbnails(UserId);
+        Member user = userRepository.findByUsername(jwtTokenProvider.getUsername(authorization.substring(7))).get();
+        return plan_repo.findByAuthor_Username(user.getUsername());
     }
 
 
