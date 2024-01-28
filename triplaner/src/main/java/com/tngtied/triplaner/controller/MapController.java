@@ -13,6 +13,7 @@ import javax.ws.rs.BadRequestException;
 
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
+import com.tngtied.triplaner.JwtTokenProvider;
 import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.dto.NGeocodeDTO;
 import com.tngtied.triplaner.dto.NGeocodeWithErrDTO;
@@ -23,6 +24,7 @@ import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
 import com.tngtied.triplaner.repository.DayPlanRepository;
 import com.tngtied.triplaner.repository.PlanRepository;
+import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.TripService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -40,9 +42,13 @@ public class MapController {
     private String naverClientId;
 
     @Autowired
+    public JwtTokenProvider jwtTokenProvider;
+
+    @Autowired
     public TripService tripService;
-//    @Autowired
-//    public MemberService memberService;
+
+    @Autowired
+    public UserRepository userRepository;
 
     @Autowired
     public PlanRepository plan_repo;
@@ -55,9 +61,12 @@ public class MapController {
     }
 
     @GetMapping("s")
-    public List<TripThumbnailDTO> trip_list() {
-        return plan_repo.findThumbnails();
+    public List<TripThumbnailDTO> trip_list(@RequestHeader("Authorization") String authorization) {
+        System.out.println(">> ${base.path}"+"/trips accessed");
+        Long UserId = userRepository.findByUsername(jwtTokenProvider.getUsername(authorization)).get().getUserId();
+        return plan_repo.findThumbnails(UserId);
     }
+
 
     @PostMapping()
     public Plan initiate_trip(@RequestBody InitiateTripRequestDTO trip_dto) {

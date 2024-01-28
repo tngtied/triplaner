@@ -7,16 +7,11 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import com.tngtied.triplaner.dto.NGeocodeDTO;
-import com.tngtied.triplaner.entity.DayPlan;
-import com.tngtied.triplaner.entity.Place;
-import com.tngtied.triplaner.entity.Plan;
-import com.tngtied.triplaner.entity.TimePlan;
-import com.tngtied.triplaner.repository.DayPlanRepository;
-import com.tngtied.triplaner.repository.PlaceRepository;
-import com.tngtied.triplaner.repository.PlanRepository;
-import com.tngtied.triplaner.repository.TimePlanRepository;
+import com.tngtied.triplaner.entity.*;
+import com.tngtied.triplaner.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,6 +27,8 @@ public class TripService {
   public TimePlanRepository time_repo;
   @Autowired
   public PlaceRepository place_repo;
+  @Autowired
+  public UserRepository userRepository;
 
 
   public TimePlan makeTimeplan(int j){
@@ -48,10 +45,13 @@ public class TripService {
   @Transactional
   public void make_data() {
     System.out.println("println: make_data invoked");
+    Member member = userRepository.findByUsername("username").get();
+
     Plan plan1 = new Plan();
     plan1.title = "kyungju";
     plan1.startDate = LocalDate.of(2023, 8, 13);
     plan1.endDate =  LocalDate.of(2023, 9, 12);
+    plan1.author = member;
 
     ArrayList<DayPlan> dayplan_list = new ArrayList<>();
     for (int i = 1; i < 3; i++) {

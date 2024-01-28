@@ -50,6 +50,8 @@ public class Member implements UserDetails {
     @JsonManagedReference
     private List<Plan> plans;
 
+    public Member(){
+    }
     public Member(String username, String password, String role, String email){
         this.username = username;
         this.password = password;
