@@ -90,7 +90,7 @@ class MapControllerTest {
     void planListGetTest() throws Exception {
         String accessToken = getAccessToken();
         tripService.make_data();
-        mockMvc.perform(get(base_mapping + "s")
+        mockMvc.perform(get(base_mapping + "/list")
                 .header("Authorization", "Bearer " + accessToken))
                 .andExpect(status().isOk())
                 .andDo(print());

@@ -60,10 +60,10 @@ public class MapController {
 
     }
 
-    @GetMapping("s")
+    @GetMapping("/list")
     public List<TripThumbnailDTO> trip_list(@RequestHeader("Authorization") String authorization) {
         System.out.println(">> ${base.path}"+"/trips accessed");
-        Long UserId = userRepository.findByUsername(jwtTokenProvider.getUsername(authorization)).get().getUserId();
+        Long UserId = userRepository.findByUsername(jwtTokenProvider.getUsername(authorization.substring(7))).get().getUserId();
         return plan_repo.findThumbnails(UserId);
     }
 

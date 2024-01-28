@@ -14,7 +14,7 @@ public interface PlanRepository extends JpaRepository<Plan, Integer> {
 
     @Query(value = "SELECT p.TITLE, p.START_DATE AS startDate, p.END_DATE AS endDate " +
             "FROM Plan p " +
-            "WHERE p.USERID = :id", nativeQuery = true)
+            "WHERE p.author.USERID = :id", nativeQuery = true)
     public List<TripThumbnailDTO> findThumbnails(@Param("id") Long id);
 
 }
