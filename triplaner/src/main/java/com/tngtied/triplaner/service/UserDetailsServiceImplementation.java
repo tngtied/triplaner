@@ -9,6 +9,7 @@ import com.tngtied.triplaner.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -23,7 +24,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class UserDetailsServiceImplementation implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
@@ -66,11 +67,16 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     public TokenInfo login(String username, String password) {
         UserDetails user = this.loadUserByUsername(username);
+        if (user.equals(null)){
+            System.out.println(">> User not Found");
+            throw new UsernameNotFoundException("유저가 존재하지 않습니다");
+        }
         
-        if (passwordEncoder.matches(user.getPassword(), password)) {
+        if (passwordEncoder.matches(password, user.getPassword())) {
             return jwtTokenProvider.generateToken(user);
         } else {
-            return null;
+            System.out.println(">> Password Doesn't match");
+            throw new BadCredentialsException("패스워드가 일치하지 않습니다");
         }
     }
 }

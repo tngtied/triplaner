@@ -38,11 +38,10 @@ public class JwtTokenProvider {
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        Date accessTokenExpiresIn = (Date) Date.from(LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.ofHours(8)));
         String accessToken = Jwts.builder()
                 .setSubject(user.getUsername())
                 .claim("auth", authorities)
-                .setExpiration(accessTokenExpiresIn)
+                .setExpiration(Date.from(LocalDateTime.now().plusHours(1).toInstant(ZoneOffset.ofHours(8))))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 

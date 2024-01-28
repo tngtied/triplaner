@@ -2,6 +2,7 @@ plugins {
 	id 'java'
 	id 'org.springframework.boot' version '3.1.1'
 	id 'io.spring.dependency-management' version '1.1.0'
+	id "org.asciidoctor.jvm.convert" version "3.3.2"
 }
 
 group = 'com.tngtied'
@@ -10,9 +11,23 @@ version = '0.0.1-SNAPSHOT'
 java {
 	sourceCompatibility = '17'
 }
-
+ext {
+	snippetsDir = file('build/generated-snippets')
+}
 repositories {
 	mavenCentral()
+}
+bootJar {
+	dependsOn asciidoctor
+	copy {
+		from "${asciidoctor.outputDir}"
+		into 'BOOT-INF/classes/static/docs'
+	}
+}
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
 dependencies {
@@ -32,7 +47,7 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-
+	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
 	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.1.2.RELEASE'
 	implementation "org.hibernate.validator:hibernate-validator:"
@@ -51,4 +66,19 @@ dependencies {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+asciidoctor {
+	dependsOn test
+	inputs.dir snippetsDir
+}
+asciidoctor.doFirst {
+	delete file('src/main/resources/static/docs')
+}
+task copyDocument(type: Copy) {
+	dependsOn asciidoctor
+	from file("build/docs/asciidoc")
+	into file("src/main/resources/static/docs")
+}
+build {
+	dependsOn copyDocument
 }

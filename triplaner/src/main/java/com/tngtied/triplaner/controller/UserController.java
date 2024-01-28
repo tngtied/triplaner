@@ -2,10 +2,14 @@ package com.tngtied.triplaner.controller;
 
 
 import com.tngtied.triplaner.dto.*;
-import com.tngtied.triplaner.service.UserDetailsServiceImpl;
+import com.tngtied.triplaner.service.UserDetailsServiceImplementation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -20,7 +24,7 @@ import java.util.regex.Pattern;
 @RequestMapping("${base.path}"+ "/user")
 public class UserController {
 
-    private final UserDetailsServiceImpl userService;
+    private final UserDetailsServiceImplementation userService;
 
     @GetMapping("/signup")
     public void signup(){}
@@ -85,14 +89,20 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public TokenInfo PostLogin(@RequestBody UserLoginDTO userLoginDTO){
-        System.out.println(">> Login mapping accessed");
-        // TokenInfo tokenInfo = userService.login(
-        //         userLoginDTO.getUsername(),
-        //         userLoginDTO.getPassword()
-        //     );
-        // return tokenInfo;
-        return null;
+    public ResponseEntity PostLogin(@RequestBody UserLoginDTO userLoginDTO){
+        try {
+            TokenInfo tokenInfo = userService.login(userLoginDTO.getUsername(), userLoginDTO.getPassword());
+
+            return ResponseEntity.ok()
+                    .header(
+                            HttpHeaders.AUTHORIZATION,
+                            String.valueOf(tokenInfo)
+                    )
+                    .body("");
+        } catch (Exception ex) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
     }
 
 }

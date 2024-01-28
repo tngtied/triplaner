@@ -8,29 +8,26 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.tngtied.triplaner.dto.UserLoginDTO;
 import com.tngtied.triplaner.dto.UserSignupDTO;
-import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.repository.UserRepository;
-import com.tngtied.triplaner.service.UserDetailsServiceImpl;
+import com.tngtied.triplaner.service.UserDetailsServiceImplementation;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.Optional;
 
 
 @Transactional
 @AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
+@AutoConfigureRestDocs
 class UserControllerTest {
 
     @Value("${base.path}")
@@ -43,7 +40,7 @@ class UserControllerTest {
     private UserRepository userRepository;
 
     @Autowired
-    private UserDetailsServiceImpl userService;
+    private UserDetailsServiceImplementation userService;
 
 
 
@@ -76,7 +73,12 @@ class UserControllerTest {
     @DisplayName("Test: post signup valid")
     void signupTestValid() throws Exception{
         String siteUser = objectToJson(makeValidUser());
-        signupMvc(siteUser);
+        mockMvc.perform(post(base_path+"/user/signup")
+                        .content(siteUser)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andDo(print());
     }
 
     @Test
@@ -120,14 +122,25 @@ class UserControllerTest {
     @Test
     void loginTestSuccess() throws Exception {
 
-        //진짜어떻겧하는지모르겟다 일단스킵
         signupMvc(objectToJson(makeValidUser()));
         System.out.println(">> make valid user complete");
         UserLoginDTO loginDTO = new UserLoginDTO("test", "password");
+
         mockMvc.perform(post(base_path+"/user/login")
                         .content(objectToJson(loginDTO))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void loginTestFail() throws Exception {
+
+        UserLoginDTO loginDTO = new UserLoginDTO("test", "password");
+        mockMvc.perform(post(base_path+"/user/login")
+                        .content(objectToJson(loginDTO))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized())
                 .andDo(print());
     }
 
