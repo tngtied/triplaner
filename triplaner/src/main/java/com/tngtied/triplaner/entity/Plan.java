@@ -1,5 +1,6 @@
 package com.tngtied.triplaner.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -24,6 +25,11 @@ public class Plan {
 
     @Column(name="TITLE")
     public String title;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="AUTHOR")
+    @JsonBackReference
+    public Member author;
 
     @Column(name="START_DATE")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern=datePattern)

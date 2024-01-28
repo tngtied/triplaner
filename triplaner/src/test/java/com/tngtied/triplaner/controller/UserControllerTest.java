@@ -27,10 +27,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.Optional;
 
-@SpringBootTest
-@Transactional
 
+@Transactional
 @AutoConfigureMockMvc(addFilters = false)
+@SpringBootTest
 class UserControllerTest {
 
     @Value("${base.path}")
@@ -45,8 +45,7 @@ class UserControllerTest {
     @Autowired
     private UserDetailsServiceImpl userService;
 
-    @Autowired
-    public MapControllerTest mapControllerTest;
+
 
     @MockBean
     private AuthenticationManagerBuilder authenticationManagerBuilder;
@@ -130,7 +129,6 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andDo(print());
-        mapControllerTest.planListPostTest();
     }
 
 

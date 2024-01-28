@@ -1,5 +1,6 @@
 package com.tngtied.triplaner.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -44,6 +45,10 @@ public class Member implements UserDetails {
     @Email
     @Column(unique = true, name = "EMAIL")
     private String email;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "author")
+    @JsonManagedReference
+    private List<Plan> plans;
 
     public Member(String username, String password, String role, String email){
         this.username = username;
