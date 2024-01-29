@@ -5,7 +5,7 @@ import java.time.LocalDate;
 
 public interface TripThumbnailDTO {
 
-    int getId();
+//    int getId();
     String getTitle();
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern="yyyy-MM-dd")
     LocalDate getStartDate();
