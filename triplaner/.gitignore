@@ -38,4 +38,5 @@ out/
 
 ### API KEYS ###
 ### 퍼블릭 발행 시 주석처리 제거 ###
-### application-API-KEY.properties ###
+triplaner/src/main/resources/application-API-KEY.properties
+triplaner/src/main/resources/application.properties
