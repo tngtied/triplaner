@@ -32,6 +32,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         }
 
         chain.doFilter(request, response);
+        // refresh token 검증하는 부분 필요
 
 }
 

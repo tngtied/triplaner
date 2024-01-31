@@ -2,9 +2,9 @@ package com.tngtied.triplaner.controller;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.*;
 import java.rmi.UnexpectedException;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -14,15 +14,14 @@ import javax.ws.rs.BadRequestException;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
 import com.tngtied.triplaner.JwtTokenProvider;
-import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
-import com.tngtied.triplaner.dto.NGeocodeDTO;
-import com.tngtied.triplaner.dto.NGeocodeWithErrDTO;
-import com.tngtied.triplaner.dto.TripThumbnailDTO;
+import com.tngtied.triplaner.dto.*;
 import com.tngtied.triplaner.entity.*;
 import com.tngtied.triplaner.repository.DayPlanRepository;
 import com.tngtied.triplaner.repository.PlanRepository;
+import com.tngtied.triplaner.repository.TimePlanRepository;
 import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.TripService;
+import org.hibernate.mapping.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -38,6 +37,9 @@ public class MapController {
     @Value("${NAVER-CLIENT}")
     private String naverClientId;
 
+    @Value("${TMAP-KEY}")
+    private String tmapKey;
+
     @Autowired
     public JwtTokenProvider jwtTokenProvider;
 
@@ -51,6 +53,9 @@ public class MapController {
     public PlanRepository plan_repo;
     @Autowired
     public DayPlanRepository day_repo;
+
+    @Autowired
+    public TimePlanRepository timePlanRepository;
 
     @GetMapping("/home")
     public void home_get(){
@@ -97,6 +102,37 @@ public class MapController {
         return  dayPlanFound;
      }
 
+    @PostMapping("/{timePlan_id}/time")
+    public void setTimePlan(@PathVariable int id, @RequestBody SetTimeDTO setTimeDTO){
+        TimePlan timePlan = timePlanRepository.findById(id).get();
+        timePlan.setTime(setTimeDTO.time);
+    }
+
+    @GetMapping("/route")
+    public void getRoute(@PathVariable int id, @RequestBody HashMap<String, Object> map) throws IOException {
+        URL url = new URL("https://apis.openapi.sk.com/transit/routes");
+        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        httpURLConnection.setRequestMethod("POST");
+        httpURLConnection.setRequestProperty("accept", "application/json");
+        httpURLConnection.setRequestProperty("appKey", tmapKey);
+        httpURLConnection.setRequestProperty("content-type", "application/json");
+        httpURLConnection.setDoOutput(true);
+
+        OutputStream outputStream = httpURLConnection.getOutputStream();
+        OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, "UTF-8");
+        RouteRequestDTO routeRequestDTO = new RouteRequestDTO(map.get("startX").toString(), map.get("startY").toString(), map.get("endX").toString(), map.get("endY").toString(), 5, 0, "json");
+        outputStreamWriter.write(routeRequestDTO.toString());
+        outputStreamWriter.flush();
+        outputStreamWriter.close();
+        outputStream.close();
+
+        httpURLConnection.connect();
+
+
+
+
+    }
+
     @PostMapping("/geocode")
     public Place addressToCoord(@RequestBody HashMap<String, Object> map) throws IOException {
         URL url = new URL("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(map.get("address").toString(), "utf-8"));
@@ -137,6 +173,8 @@ public class MapController {
              return (tripService.nGeoDTOToPlace(nGeocodeDTO));
          }
      }
+
+
 }
 
 

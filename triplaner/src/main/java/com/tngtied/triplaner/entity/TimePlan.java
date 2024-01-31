@@ -6,10 +6,14 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.tngtied.triplaner.entity.DayPlan;
 import com.tngtied.triplaner.entity.Place;
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.sql.Time;
 
 @Entity
+@Getter
+@Setter
 @Table (name = "TIMEPLAN")
 public class TimePlan {
     public TimePlan(){
@@ -19,7 +23,7 @@ public class TimePlan {
     @Id
     @GeneratedValue
     @Column(name="TIMEPLAN_ID")
-    private int timeplan_id;
+    private Long timeplan_id;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern= "HH:mm")
     @Column(name = "TIME")
