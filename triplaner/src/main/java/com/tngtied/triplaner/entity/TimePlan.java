@@ -35,7 +35,7 @@ public class TimePlan {
     public DayPlan parentPlan;
 
 
-    @OneToOne(fetch = FetchType.EAGER, mappedBy="parentPlan")
+    @OneToOne(fetch = FetchType.LAZY, mappedBy="parentPlan")
     @JsonManagedReference
     public Place place;
 

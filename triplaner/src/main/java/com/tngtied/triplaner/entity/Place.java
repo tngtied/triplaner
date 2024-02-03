@@ -10,7 +10,7 @@ public class Place{
     @GeneratedValue
     private Long placeId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.DETACH)
     @JoinColumn(name ="PARENT_PLAN")
     @JsonBackReference
     private TimePlan parentPlan;
