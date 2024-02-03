@@ -2,14 +2,13 @@ package com.tngtied.triplaner.controller;
 
 
 import com.tngtied.triplaner.dto.*;
-import com.tngtied.triplaner.service.UserDetailsServiceImplementation;
+import com.tngtied.triplaner.service.UserDetailsServiceImpl;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -24,7 +23,7 @@ import java.util.regex.Pattern;
 @RequestMapping("${base.path}"+ "/user")
 public class UserController {
 
-    private final UserDetailsServiceImplementation userService;
+    private final UserDetailsServiceImpl userService;
 
     @GetMapping("/signup")
     public void signup(){}

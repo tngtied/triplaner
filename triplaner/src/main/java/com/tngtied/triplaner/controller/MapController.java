@@ -12,6 +12,7 @@ import java.util.List;
 import javax.ws.rs.BadRequestException;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.google.gson.stream.JsonReader;
 import com.tngtied.triplaner.JwtTokenProvider;
 import com.tngtied.triplaner.dto.*;
@@ -21,6 +22,8 @@ import com.tngtied.triplaner.repository.PlanRepository;
 import com.tngtied.triplaner.repository.TimePlanRepository;
 import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.TripService;
+import org.apache.tomcat.util.json.JSONParser;
+import org.apache.tomcat.util.json.ParseException;
 import org.hibernate.mapping.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -109,9 +112,11 @@ public class MapController {
     }
 
     @GetMapping("/route")
-    public void getRoute(@PathVariable int id, @RequestBody HashMap<String, Object> map) throws IOException {
+    public JsonObject getRoute(@RequestBody HashMap<String, Object> map) throws
+            IOException,
+            ParseException {
         URL url = new URL("https://apis.openapi.sk.com/transit/routes");
-        HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+        HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
         httpURLConnection.setRequestMethod("POST");
         httpURLConnection.setRequestProperty("accept", "application/json");
         httpURLConnection.setRequestProperty("appKey", tmapKey);
@@ -120,7 +125,9 @@ public class MapController {
 
         OutputStream outputStream = httpURLConnection.getOutputStream();
         OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, "UTF-8");
-        RouteRequestDTO routeRequestDTO = new RouteRequestDTO(map.get("startX").toString(), map.get("startY").toString(), map.get("endX").toString(), map.get("endY").toString(), 5, 0, "json");
+        RouteRequestDTO routeRequestDTO = new RouteRequestDTO(map.get("startX").toString(),
+                map.get("startY").toString(), map.get("endX").toString(), map.get("endY").toString(), 5, 0, "json",
+                map.get("date").toString(), map.get("time").toString());
         outputStreamWriter.write(routeRequestDTO.toString());
         outputStreamWriter.flush();
         outputStreamWriter.close();
@@ -128,9 +135,17 @@ public class MapController {
 
         httpURLConnection.connect();
 
-
-
-
+        InputStreamReader inputStreamReader;
+        try {
+            inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(), "utf-8");
+            JSONParser jsonParser = new JSONParser(inputStreamReader);
+            return (JsonObject)jsonParser.parse();
+        } catch (IOException | ParseException exception) {
+            inputStreamReader = new InputStreamReader(httpURLConnection.getErrorStream(), "utf-8");
+            String errorMessage = tripService.readFromReader(inputStreamReader);
+            System.out.println(errorMessage);
+            throw new UnexpectedException(errorMessage);
+        }
     }
 
     @PostMapping("/geocode")
