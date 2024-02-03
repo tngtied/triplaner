@@ -18,6 +18,7 @@ import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.entity.TimePlan;
 import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.TripService;
+
 import org.json.JSONObject;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,99 +39,100 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @AutoConfigureMockMvc
 class MapControllerTest {
 
-    private static final String base_mapping = "/api/v1/trip";
+	@Value("${base.path}")
+	private String base_path;
+	@Autowired
+	private MockMvc mockMvc;
+	@Autowired
+	public TripService tripService;
 
-    @Value("${base.path}")
-    private String base_path;
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    public TripService tripService;
+	@Autowired
+	public JwtTokenProvider jwtTokenProvider;
 
-    @Autowired
-    public JwtTokenProvider jwtTokenProvider;
+	@Autowired
+	public UserRepository userRepository;
 
-    @Autowired
-    public UserRepository userRepository;
+	String objectToJson(Object obj) {
+		try {
+			return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(obj);
+		} catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
 
-    String objectToJson(Object obj) {
-        try {
-            return new ObjectMapper().registerModule(new JavaTimeModule()).writeValueAsString(obj);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+	String getAccessToken() {
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
+		UserDetails userDetails = new User("username", "password", authorities);
+		Member member = new Member("username", "password", "USER", "email@gmail.com");
+		userRepository.save(member);
+		TokenInfo tokenInfo = jwtTokenProvider.generateToken(userDetails);
+		return tokenInfo.getAccessToken();
+	}
 
-    String getAccessToken(){
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
-        UserDetails userDetails = new User("username", "password", authorities);
-        Member member = new Member("username", "password", "USER", "email@gmail.com");
-        userRepository.save(member);
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(userDetails);
-        return tokenInfo.getAccessToken();
-    }
+	@Test
+	@DisplayName("plan dto post test")
+	void planListPostTest() throws Exception {
+		InitiateTripRequestDTO dto1 = new InitiateTripRequestDTO("kyungju", LocalDate.of(2023, 9, 13),
+			LocalDate.of(2023, 9, 13));
+		String accessToken = getAccessToken();
+		mockMvc.perform(post(base_path)
+				.header("Authorization", "Bearer " + accessToken)
+				.content(objectToJson(dto1))
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
 
-    @Test
-    @DisplayName("plan dto post test")
-    void planListPostTest() throws Exception {
-        InitiateTripRequestDTO dto1 = new InitiateTripRequestDTO("kyungju", LocalDate.of(2023, 9, 13), LocalDate.of(2023, 9, 13));
-        String accessToken = getAccessToken();
-        mockMvc.perform(post(base_mapping)
-                .header("Authorization", "Bearer " + accessToken)
-                .content(objectToJson(dto1))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
+	@Test
+	@DisplayName("plan-list get test")
+	void planListGetTest() throws Exception {
+		String accessToken = getAccessToken();
+		tripService.makeDummyData();
+		mockMvc.perform(get(base_path + "/list")
+				.header("Authorization", "Bearer " + accessToken))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
 
-    @Test
-    @DisplayName("plan-list get test")
-    void planListGetTest() throws Exception {
-        String accessToken = getAccessToken();
-        tripService.make_data();
-        mockMvc.perform(get(base_mapping + "/list")
-                .header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
+	@Test
+	@DisplayName("plan get test using id")
+	void planGetTest() throws Exception {
+		String accessToken = getAccessToken();
+		tripService.makeDummyData();
+		mockMvc.perform(get(base_path + "/1")
+				.header("Authorization", "Bearer " + accessToken))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
 
-    @Test
-    @DisplayName("plan get test using id")
-    void planGetTest() throws Exception{
-        String accessToken = getAccessToken();
-        tripService.make_data();
-        mockMvc.perform(get(base_mapping+"/1")
-                .header("Authorization", "Bearer " + accessToken))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
+	@Test
+	void putTimePlanTest() throws Exception {
+		String accessToken = getAccessToken();
+		tripService.makeDummyData();
+		TimePlan tp = tripService.makeTimeplan(3);
+		mockMvc.perform(put(base_path + "/1/2023-09-01")
+				.header("Authorization", "Bearer " + accessToken)
+				.content(objectToJson(tp))
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
 
-    @Test
-    void putTimePlanTest() throws Exception {
-        String accessToken = getAccessToken();
-        tripService.make_data();
-        TimePlan tp = tripService.makeTimeplan(3);
-        mockMvc.perform(put(base_mapping+"/1/2023-09-01")
-                .header("Authorization", "Bearer " + accessToken)
-                .content(objectToJson(tp))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
+	@Test
+	void addressToCoordinate() throws Exception {
+		String accessToken = getAccessToken();
+		JSONObject postContent = new JSONObject();
+		postContent.put("address", "서울특별시 강남구 강남대로 310");
 
-    @Test
-    void addressToCoord() throws Exception {
-        JSONObject postContent = new JSONObject();
-        postContent.put("address", "서울특별시 강남구 강남대로 310");
-
-        mockMvc.perform(post(base_mapping+"geocode")
-                .content(String.valueOf(postContent))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
+		mockMvc.perform(post(base_path + "geocode")
+				.header("Authorization", "Bearer " + accessToken)
+				.content(String.valueOf(postContent))
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andDo(print());
+	}
 }
