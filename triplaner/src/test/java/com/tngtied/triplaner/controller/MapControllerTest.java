@@ -103,7 +103,8 @@ class MapControllerTest {
 		String accessToken = getAccessToken();
 		tripService.make_data();
 		mockMvc.perform(get(base_mapping + "/1")
-				.header("Authorization", "Bearer " + accessToken))
+				.header("Authorization", "Bearer " + accessToken)
+			)
 			.andExpect(status().isOk())
 			.andDo(print());
 	}
@@ -126,8 +127,9 @@ class MapControllerTest {
 	void addressToCoord() throws Exception {
 		JSONObject postContent = new JSONObject();
 		postContent.put("address", "서울특별시 서대문구 연세로 50");
-
+		String accessToken = getAccessToken();
 		mockMvc.perform(post(base_mapping + "/geocode")
+				.header("Authorization", "Bearer " + accessToken)
 				.content(String.valueOf(postContent))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
@@ -137,16 +139,11 @@ class MapControllerTest {
 
 	@Test
 	void getRouteTest() throws Exception {
-		// TODO access token 없이도 해당 url 접근 가능한 이슈
-		
 		String accessToken = getAccessToken();
-		// JSONObject jsonObject = new JSONObject()
-		// 	.put("startX", "127.0315025")
-		// 	.put("startY", "37.4909898")
-		// 	.put("endX", "126.9390292")
-		// 	.put("endY", "");
+
 		String routeRequestString = "{\"startX\": \"127.0315025\", \"startY\": \"37.4909898\", \"endX\":\"126.9390292\", \"endY\": \"37.5671131\", \"date\": \"2024-02-04\", \"time\":\"11:00\"}";
 		mockMvc.perform(get(base_mapping + "/route")
+				.header("Authorization", "Bearer " + accessToken)
 				.content(routeRequestString)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))

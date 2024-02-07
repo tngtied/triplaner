@@ -155,7 +155,6 @@ public class MapController {
 		ObjectMapper objectMapper = new ObjectMapper();
 		String routeRequestString = objectMapper.writeValueAsString(routeRequestDTO);
 		System.out.println(">> request json string: " + routeRequestString);
-		// todo RouteRequestDTO(startX=127.0315025, startY=37.4909898, endX=126.9390292, endY=37.5671131, count=5, lang=0, format=json, searchDttm=202402041100) 을 json으로 바꾸기
 		outputStreamWriter.write(routeRequestString);
 		outputStreamWriter.flush();
 		outputStreamWriter.close();
