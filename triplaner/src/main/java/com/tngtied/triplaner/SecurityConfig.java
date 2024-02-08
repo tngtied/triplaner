@@ -3,46 +3,55 @@ package com.tngtied.triplaner;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
 @Configuration
 @RequiredArgsConstructor
-public class SecurityConfig {
+@EnableWebSecurity
+public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	private final JwtAuthenticationFilter jwtAuthenticationFilter;
-
+	private final JwtTokenProvider jwtTokenProvider;
 	@Value("$base.path")
 	private String basePath;
 
 	// 나중에 허용할 url 취합해서 넣기
 	@Bean
-	SecurityFilterChain filterDefaultChain(HttpSecurity http) throws Exception {
-		System.out.println(">> filterDefaultChain activated");
-		http.securityMatcher("/api/v1/**")
-			// .securityMatcher("/api/v1/*/*")
-			.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
-		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-
-		return http.build();
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception {
+		return super.authenticationManagerBean();
 	}
 
-	@Bean
-	@Order(1)
-	SecurityFilterChain filterUserChain(HttpSecurity http) throws Exception {
-		http.securityMatcher("/api/v1/user/**")
-			.authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll());
-		return http.build();
+	@Override
+	protected void configure(HttpSecurity http) throws Exception {
+		http
+			.csrf().disable()
+			
+			.sessionManagement()
+			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+			.and()
+
+			.authorizeRequests() //ServletRequest를 사용하는 요청에 대한 접근 제한 설정
+			.antMatchers(HttpMethod.POST, "/api/auth/**").permitAll() //검증 없이 이용가능(Post 요청 가능)
+			.anyRequest().authenticated()
+			.and()
+
+			//JwtSecurityConfig 적용
+			.apply(new JwtSecurityConfig(jwtTokenProvider));
+
 	}
 
 	@Bean
 	PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
+
 }

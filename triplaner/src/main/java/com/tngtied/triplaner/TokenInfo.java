@@ -1,4 +1,4 @@
-package com.tngtied.triplaner.dto;
+package com.tngtied.triplaner;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class TokenInfo {
-    private String grantType;
-    private String accessToken;
-    private String refreshToken;
+	private String grantType;
+	private String accessToken;
+	private String refreshToken;
 }
