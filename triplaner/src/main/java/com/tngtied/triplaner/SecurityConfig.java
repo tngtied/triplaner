@@ -10,6 +10,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -17,6 +19,10 @@ import lombok.RequiredArgsConstructor;
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
+	private final AuthenticationExceptionHandler authenticationExceptionHandler;
+
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
+	private final ObjectMapper objectMapper;
 
 	@Value("$base.path")
 	private String basePath;
@@ -25,10 +31,17 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain filterDefaultChain(HttpSecurity http) throws Exception {
 		System.out.println(">> filterDefaultChain activated");
-		http.securityMatcher("/api/v1/**")
+		http.
+			securityMatcher("/api/v1/.*")
 			// .securityMatcher("/api/v1/*/*")
 			.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
 		http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+		http.exceptionHandling(
+			exceptionHandler -> {
+				exceptionHandler.authenticationEntryPoint(authenticationExceptionHandler);
+				exceptionHandler.accessDeniedHandler(customAccessDeniedHandler);
+			});
 
 		return http.build();
 	}

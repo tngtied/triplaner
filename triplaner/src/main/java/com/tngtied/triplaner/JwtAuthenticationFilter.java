@@ -6,23 +6,25 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-import org.springframework.web.filter.GenericFilterBean;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.ServletRequest;
-import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class JwtAuthenticationFilter extends GenericFilterBean {
+public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
 	private final JwtTokenProvider jwtTokenProvider;
+	private final ObjectMapper objectMapper;
 
 	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws
+	public void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws
 		ServletException,
 		IOException {
 		System.out.println(">> JwtAuthenticationFilter doFilter...");
@@ -33,10 +35,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 			Authentication authentication = jwtTokenProvider.getAuthentication(token);
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 
+		} else {
+			response.setContentType("application/json"); // JSON으로 사용자에게 전달
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED); // Http Status 401로 전달
+			response.setCharacterEncoding("utf-8"); // 본문 내용은 UTF-8
+			response.getWriter()
+				.write(objectMapper.writeValueAsString(
+					new AuthenticationExceptionHandler.LoginFailResponse("유효하지 않은 요청입니다."))); //
+			return;
 		}
-		// else {
-		// 	throw new BadCredentialsException("Invalid Credentials");
-		// }
 		chain.doFilter(request, response);
 		// refresh token 검증하는 부분 필요
 
