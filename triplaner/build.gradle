@@ -1,87 +1,100 @@
 plugins {
-	id 'java'
-	id 'org.springframework.boot' version '3.1.1'
-	id 'io.spring.dependency-management' version '1.1.0'
-	id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id 'java'
+    id 'org.springframework.boot' version '3.1.1'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id "org.asciidoctor.jvm.convert" version "3.3.2"
+    id 'com.google.cloud.tools.jib' version '3.1.2'
 }
 
 group = 'com.tngtied'
 version = '0.0.1-SNAPSHOT'
 
 java {
-	sourceCompatibility = '17'
+    sourceCompatibility = '17'
 }
 ext {
-	snippetsDir = file('build/generated-snippets')
+    snippetsDir = file('build/generated-snippets')
 }
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 bootJar {
-	dependsOn asciidoctor
-	copy {
-		from "${asciidoctor.outputDir}"
-		into 'BOOT-INF/classes/static/docs'
-	}
+    dependsOn asciidoctor
+    copy {
+        from "${asciidoctor.outputDir}"
+        into 'BOOT-INF/classes/static/docs'
+    }
 }
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	implementation 'org.springframework.boot:spring-boot-starter-security'
-	implementation 'org.springframework.security:spring-security-core:6.1.4'
-	implementation 'org.springframework.security:spring-security-oauth2-resource-server:6.1.0'
-	implementation 'org.springframework.security:spring-security-oauth2-core:6.1.4'
-	implementation 'org.springframework.security:spring-security-oauth2-jose:6.1.0'
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.security:spring-security-core:6.1.4'
+    implementation 'org.springframework.security:spring-security-oauth2-resource-server:6.1.0'
+    implementation 'org.springframework.security:spring-security-oauth2-core:6.1.4'
+    implementation 'org.springframework.security:spring-security-oauth2-jose:6.1.0'
 
-	implementation 'com.nimbusds:nimbus-jose-jwt:9.34'
-	implementation 'io.jsonwebtoken:jjwt:0.12.0'
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.34'
+    implementation 'io.jsonwebtoken:jjwt:0.12.0'
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-	testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
 
-	implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.1.2.RELEASE'
-	implementation "org.hibernate.validator:hibernate-validator:"
+    implementation 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.1.2.RELEASE'
+    implementation "org.hibernate.validator:hibernate-validator:"
 
 
-	implementation 'org.projectlombok:lombok:1.18.22'
-	annotationProcessor 'org.projectlombok:lombok:1.18.22'
+    implementation 'org.projectlombok:lombok:1.18.22'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
-	implementation 'commons-io:commons-io:2.13.0'
+    implementation 'commons-io:commons-io:2.13.0'
 
-	implementation 'com.google.code.gson:gson:2.10.1'
-	implementation 'org.json:json:20171018'
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.json:json:20171018'
 
-	testImplementation 'junit:junit:4.13.1'
-	implementation 'javax.ws.rs:javax.ws.rs-api:2.0.1'
-	runtimeOnly 'com.h2database:h2'
-	implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
+    testImplementation 'junit:junit:4.13.1'
+    implementation 'javax.ws.rs:javax.ws.rs-api:2.0.1'
+    runtimeOnly 'com.h2database:h2'
+    implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 }
 
 tasks.named('test') {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 asciidoctor {
-	dependsOn test
-	inputs.dir snippetsDir
+    dependsOn test
+    inputs.dir snippetsDir
 }
 asciidoctor.doFirst {
-	delete file('src/main/resources/static/docs')
+    delete file('src/main/resources/static/docs')
 }
 task copyDocument(type: Copy) {
-	dependsOn asciidoctor
-	from file("build/docs/asciidoc")
-	into file("src/main/resources/static/docs")
+    dependsOn asciidoctor
+    from file("build/docs/asciidoc")
+    into file("src/main/resources/static/docs")
 }
 build {
-	dependsOn copyDocument
+    dependsOn copyDocument
+}
+jib {
+    from {
+        image = "adoptopenjdk/openjdk16:x86_64-alpine-jdk-16.0.1_9"
+    }
+    to {
+        image = "sepiro2000/hello-jib"
+        tags = ["latest"]
+    }
+    container {
+        jvmFlags = ["-Xms128m", "-Xmx128m"]
+    }
 }
