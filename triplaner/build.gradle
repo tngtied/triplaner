@@ -88,7 +88,7 @@ build {
 }
 jib {
     from {
-        image = "adoptopenjdk/openjdk16:x86_64-alpine-jdk-16.0.1_9"
+        image = "eclipse-temurin:17"
     }
     to {
         image = "tngtied/triplaner"
