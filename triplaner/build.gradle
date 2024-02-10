@@ -68,24 +68,24 @@ dependencies {
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310"
 }
 
-tasks.named('test') {
-    useJUnitPlatform()
-}
-asciidoctor {
-    dependsOn test
-    inputs.dir snippetsDir
-}
-asciidoctor.doFirst {
-    delete file('src/main/resources/static/docs')
-}
-task copyDocument(type: Copy) {
-    dependsOn asciidoctor
-    from file("build/docs/asciidoc")
-    into file("src/main/resources/static/docs")
-}
-build {
-    dependsOn copyDocument
-}
+//tasks.named('test') {
+//    useJUnitPlatform()
+//}
+//asciidoctor {
+//    dependsOn test
+//    inputs.dir snippetsDir
+//}
+//asciidoctor.doFirst {
+//    delete file('src/main/resources/static/docs')
+//}
+//task copyDocument(type: Copy) {
+//    dependsOn asciidoctor
+//    from file("build/docs/asciidoc")
+//    into file("src/main/resources/static/docs")
+//}
+//build {
+//    dependsOn copyDocument
+//}
 jib {
     from {
         image = "adoptopenjdk/openjdk16:x86_64-alpine-jdk-16.0.1_9"
@@ -93,6 +93,10 @@ jib {
     to {
         image = "triplaner"
         tags = ["latest"]
+//        auth {
+//            username = $DOCKER_USERNAME
+//            password = $DOCKER_PASSWORD
+//        }
     }
     container {
         jvmFlags = ["-Xms128m", "-Xmx128m"]

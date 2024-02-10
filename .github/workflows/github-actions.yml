@@ -48,8 +48,8 @@ jobs:
           cd ./triplaner
           chmod +x gradlew
           ./gradlew jib \
-          -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }} \
-          -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }} 
+          -Djib.from.auth.username=${{ secrets.DOCKER_USERNAME }} \
+          -Djib.from.auth.password=${{ secrets.DOCKER_PASSWORD }} 
 
       # docker build & push to production
       - name: Docker build & push to prod
