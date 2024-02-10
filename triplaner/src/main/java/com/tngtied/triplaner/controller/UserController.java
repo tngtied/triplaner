@@ -3,8 +3,6 @@ package com.tngtied.triplaner.controller;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-import javax.validation.Valid;
-
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -26,6 +24,7 @@ import com.tngtied.triplaner.dto.UserValidationErrorDTO;
 import com.tngtied.triplaner.dto.UserValidationFieldError;
 import com.tngtied.triplaner.service.UserDetailsServiceImpl;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

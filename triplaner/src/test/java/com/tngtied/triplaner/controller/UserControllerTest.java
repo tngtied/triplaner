@@ -4,8 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import javax.transaction.Transactional;
-
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +22,8 @@ import com.tngtied.triplaner.dto.UserLoginDTO;
 import com.tngtied.triplaner.dto.UserSignupDTO;
 import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.UserDetailsServiceImpl;
+
+import jakarta.transaction.Transactional;
 
 @Transactional
 @AutoConfigureMockMvc(addFilters = false)

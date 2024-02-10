@@ -2,12 +2,11 @@ package com.tngtied.triplaner.dto;
 
 import java.sql.Time;
 
-import javax.persistence.Column;
-
 import org.springframework.cglib.core.Local;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.persistence.Column;
 import lombok.Data;
 
 @Data
