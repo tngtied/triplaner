@@ -46,8 +46,8 @@ jobs:
       - name: Build gradlew
         run: |
           cd ./triplaner
-          chmod +x gradlew --debug
-          ./gradlew jib \
+          chmod +x gradlew 
+          ./gradlew jib --debug \
           -Djib.from.auth.username=${{ secrets.DOCKER_USERNAME }} \
           -Djib.from.auth.password=${{ secrets.DOCKER_PASSWORD }} 
 
