@@ -58,10 +58,10 @@ jobs:
         id: deploy-prod
         if: contains(github.ref, 'main')
         with:
-          host: ${{ secrets.HOST }} # EC2 퍼블릭 IPv4 DNS
-          username: ubuntu
-          key: ${{ secrets.PRIVATE_KEY }}
-          port: 22
+          host: ${{ secrets.REMOTE_IP }} # ec2 인스턴스 ip
+          username: ${{ secrets.REMOTE_USERNAME }} # ubuntu 아이디
+          key: ${{ secrets.REMOTE_SECRET_KEY }} # ec2 인스턴스 pem key
+          port: ${{ secrets.REMOTE_SSH_PORT }} # 접속포트번호 (보통 22)
           script: |
             sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/triplaner
