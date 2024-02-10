@@ -93,10 +93,6 @@ jib {
     to {
         image = "triplaner"
         tags = ["latest"]
-        auth {
-            username = $DOCKER_USERNAME
-            password = $DOCKER_PASSWORD
-        }
     }
     container {
         jvmFlags = ["-Xms128m", "-Xmx128m"]
