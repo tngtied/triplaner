@@ -52,13 +52,6 @@ jobs:
           -Djib.from.auth.username=${{ secrets.DOCKER_USERNAME }} \
           -Djib.from.auth.password=${{ secrets.DOCKER_PASSWORD }} 
 
-      # docker build & push to production
-      - name: Docker build & push to prod
-        if: contains(github.ref, 'main')
-        run: |
-          docker build -f Dockerfile-dev -t ${{ secrets.DOCKER_USERNAME }}/docker .
-          docker push ${{ secrets.DOCKER_USERNAME }}/docker
-
       ## deploy to production
       - name: Deploy to prod
         uses: appleboy/ssh-action@master
@@ -71,7 +64,7 @@ jobs:
           envs: GITHUB_SHA
           script: |
             sudo docker ps
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/docker
-            sudo docker run -d -p 8082:8082 ${{ secrets.DOCKER_USERNAME }}/docker
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/triplaner
+            sudo docker run -d -p 8082:8082 ${{ secrets.DOCKER_USERNAME }}/triplaner
             sudo docker image prune -f
 
