@@ -91,8 +91,12 @@ jib {
         image = "adoptopenjdk/openjdk16:x86_64-alpine-jdk-16.0.1_9"
     }
     to {
-        image = "sepiro2000/hello-jib"
+        image = "triplaner"
         tags = ["latest"]
+        auth {
+            username = $DOCKER_USERNAME
+            password = $DOCKER_PASSWORD
+        }
     }
     container {
         jvmFlags = ["-Xms128m", "-Xmx128m"]

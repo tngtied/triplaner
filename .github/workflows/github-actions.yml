@@ -42,12 +42,18 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
       
-      # gradle build
-      - name: Build with Gradle
+      # touch gradle
+      - name: Touch gradlew
         run: |
           cd ./triplaner
           chmod +x gradlew
-          ./gradlew jib
+
+      # build gradle
+      - name: Build gradlew
+        run: |
+          ./gradlew jib \
+          -Djib.to.auth.username=${{ secrets.DOCKER_USERNAME }} \
+          -Djib.to.auth.password=${{ secrets.DOCKER_PASSWORD }} 
 
       # docker build & push to production
       - name: Docker build & push to prod
