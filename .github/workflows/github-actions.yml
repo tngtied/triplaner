@@ -2,7 +2,7 @@
 name: CI/CD using github actions & docker
 
 # event trigger
-# main이나 develop 브랜치에 push가 되었을 때 실행
+# main 브랜치에 push가 되었을 때 실행
 on:
   push:
     branches:
@@ -16,12 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      # JDK setting - github actions에서 사용할 JDK 설정 (프로젝트나 AWS의 java 버전과 달라도 무방)
+      # JDK setting - github actions에서 사용할 JDK 설정
       - uses: actions/checkout@v3
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v3
         with:
-          java-version: '17'
+          java-version: '21'
           distribution: 'adopt'
 
       # gradle caching - 빌드 시간 향상
@@ -46,7 +46,6 @@ jobs:
       # build gradle
       - name: Build gradlew
         run: |
-          cd ./triplaner
           chmod +x gradlew 
           ./gradlew jib \
           -Djib.from.auth.username=${{ secrets.DOCKER_USERNAME }} \
@@ -58,13 +57,12 @@ jobs:
         id: deploy-prod
         if: contains(github.ref, 'main')
         with:
-          host: ${{ secrets.REMOTE_IP }} # ec2 인스턴스 ip
-          username: ${{ secrets.REMOTE_USERNAME }} # ubuntu 아이디
-          key: ${{ secrets.REMOTE_SECRET_KEY }} # ec2 인스턴스 pem key
-          port: ${{ secrets.REMOTE_SSH_PORT }} # 접속포트번호 (보통 22)
+          host: ${{ secrets.AWS_PUBLIC_IP }}
+          username: ${{ secrets.AWS_USER }}
+          key: ${{ secrets.AWS_PRIVATE_KEY }}
+          port: ${{ secrets.AWS_SSH_PORT }}
           script: |
-            sudo docker ps
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/triplaner
-            sudo docker run -it -d -p 80:8080 ${{ secrets.DOCKER_USERNAME }}/triplaner
+            sudo docker run -it -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/triplaner
             sudo docker image prune -f
 
