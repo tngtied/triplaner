@@ -56,7 +56,7 @@ dependencies {
 
 
     implementation 'org.projectlombok:lombok:1.18.22'
-    annotationProcessor 'org.projectlombok:lombok:1.18.30'
+    annotationProcessor 'org.projectlombok:lombok:1.18.22'
 
     implementation 'commons-io:commons-io:2.13.0'
 
