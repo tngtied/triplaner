@@ -66,6 +66,6 @@ jobs:
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/triplaner
             docker ps -q --filter ancestor=tngtied/triplaner | xargs docker stop
             docker container prune -f
-            sudo docker run -it -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/triplaner
+            sudo docker run -it -d -p --name triplaner-server 8080:8080 ${{ secrets.DOCKER_USERNAME }}/triplaner
             sudo docker image prune -f
 
