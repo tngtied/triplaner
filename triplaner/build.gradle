@@ -8,6 +8,7 @@ plugins {
 
 group = 'com.tngtied'
 version = '0.0.2-SNAPSHOT'
+ext.gradleVersion = project.getGradle().getGradleVersion()
 
 java {
     sourceCompatibility = '17'

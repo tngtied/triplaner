@@ -64,6 +64,8 @@ jobs:
           port: ${{ secrets.AWS_SSH_PORT }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/triplaner
+            docker stop $(docker ps -a -q)
+            docker rm $(docker ps -a -q)
             sudo docker run -it -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/triplaner
             sudo docker image prune -f
 
