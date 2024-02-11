@@ -65,7 +65,7 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/triplaner
             docker ps -a -q  --filter ancestor=tngtied/triplaner
-            docker rm $(docker ps -q --filter ancestor=tngtied/triplaner)
+            docker container prune -f
             sudo docker run -it -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/triplaner
             sudo docker image prune -f
 
