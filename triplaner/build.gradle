@@ -7,7 +7,7 @@ plugins {
 }
 
 group = 'com.tngtied'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.2-SNAPSHOT'
 
 java {
     sourceCompatibility = '17'
@@ -92,13 +92,7 @@ jib {
     }
     to {
         image = "tngtied/triplaner"
-        tags = ["latest"]
-//        auth {
-////            username = System.getenv('DOCKER_USERNAME')
-////            password = System.getenv('DOCKER_PASSWORD')
-//            username = "tngtied"
-//            password = "a@5213651"
-//        }
+        tags = [version]
     }
     container {
         jvmFlags = ["-Xms128m", "-Xmx128m"]
