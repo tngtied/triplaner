@@ -58,14 +58,14 @@ jobs:
         id: deploy-prod
         if: contains(github.ref, 'main')
         with:
-          host: ${{ secrets.AWS_PUBLIC_IP }}
-          username: ${{ secrets.AWS_USER }}
-          key: ${{ secrets.AWS_PRIVATE_KEY }}
-          port: ${{ secrets.AWS_SSH_PORT }}
+          host: ${{ secrets.REMOTE_IP }} # ec2 인스턴스 ip
+          username: ${{ secrets.REMOTE_USERNAME }} # ubuntu 아이디
+          key: ${{ secrets.REMOTE_SECRET_KEY }} # ec2 인스턴스 pem key
+          port: ${{ secrets.REMOTE_SSH_PORT }} # 접속포트번호 (보통 22)
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/triplaner
-            docker stop $(docker ps -a -q)
-            docker rm $(docker ps -a -q)
+            docker stop $(docker ps -q --filter ancestor=tngtied/triplaner )
+            docker rm $(docker ps -q --filter ancestor=tngtied/triplaner)
             sudo docker run -it -d -p 8080:8080 ${{ secrets.DOCKER_USERNAME }}/triplaner
             sudo docker image prune -f
 
