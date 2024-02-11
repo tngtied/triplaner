@@ -89,7 +89,7 @@ build {
 }
 jib {
     from {
-        image = "eclipse-temurin:17"
+        image = "eclipse-temurin:21"
     }
     to {
         image = "tngtied/triplaner"
