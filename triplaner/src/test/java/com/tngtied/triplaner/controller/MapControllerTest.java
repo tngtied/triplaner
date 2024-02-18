@@ -77,7 +77,7 @@ class MapControllerTest {
 			LocalDate.of(2023, 9, 13));
 		String accessToken = getAccessToken();
 		mockMvc.perform(post(base_mapping)
-				// .header("Authorization", "Bearer " + accessToken)
+				.header("Authorization", "Bearer " + accessToken)
 				.content(objectToJson(dto1))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))

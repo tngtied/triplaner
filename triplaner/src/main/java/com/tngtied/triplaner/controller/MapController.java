@@ -48,7 +48,10 @@ import com.tngtied.triplaner.repository.TimePlanRepository;
 import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.TripService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("${base.path}" + "/trip")
 public class MapController {
 
@@ -62,56 +65,49 @@ public class MapController {
 	@Value("${TMAP-KEY}")
 	private String tmapKey;
 
-	@Autowired
-	public JwtTokenProvider jwtTokenProvider;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final TripService tripService;
+	private final UserRepository userRepository;
 
-	@Autowired
-	public TripService tripService;
-
-	@Autowired
-	public UserRepository userRepository;
-
-	@Autowired
-	public PlanRepository plan_repo;
-	@Autowired
-	public DayPlanRepository day_repo;
+	private final PlanRepository planRepository;
+	private final DayPlanRepository dayPlanRepository;
 
 	@Autowired
 	public TimePlanRepository timePlanRepository;
 
 	@GetMapping("/home")
-	public void home_get() {
+	public void getHome() {
 
 	}
 
 	@GetMapping("/list")
-	public List<TripThumbnailDTO> trip_list(@RequestHeader("Authorization") String authorization) {
+	public List<TripThumbnailDTO> getTrips(@RequestHeader("Authorization") String authorization) {
 		System.out.println(">> ${base.path}" + "/trips accessed");
 		Member user = userRepository.findByUsername(jwtTokenProvider.getUsername(authorization.substring(7))).get();
 		//        return plan_repo.findByAuthor_Username(user.getUsername());
-		return plan_repo.findThumbnails(user.getUsername());
+		return planRepository.findThumbnails(user.getUsername());
 	}
 
 	@PostMapping()
-	public Plan initiate_trip(@RequestBody InitiateTripRequestDTO trip_dto) {
-		Plan plan_instance = new Plan();
-		plan_instance.title = trip_dto.title;
-		plan_instance.startDate = trip_dto.startDate;
-		plan_instance.endDate = trip_dto.endDate;
+	public Plan initiateTrip(@RequestBody InitiateTripRequestDTO trip_dto) {
+		Plan plan = new Plan();
+		plan.title = trip_dto.title;
+		plan.startDate = trip_dto.startDate;
+		plan.endDate = trip_dto.endDate;
 
-		plan_repo.save(plan_instance);
-		return (plan_instance);
+		planRepository.save(plan);
+		return (plan);
 	}
 
 	@GetMapping("/{id}")
-	public Plan get_plan(@PathVariable int id) {
-		Plan p = plan_repo.findById(id).orElse(null);
-		if (p == null) {
+	public Plan getPlan(@PathVariable int id) {
+		Plan plan = planRepository.findById(id).orElse(null);
+		if (plan == null) {
 			System.out.println("found plan was null");
 		} else {
-			System.out.println(p);
+			System.out.println(plan);
 		}
-		return (p);
+		return (plan);
 	}
 
 	@PutMapping("/{id}/{date}")
@@ -123,19 +119,19 @@ public class MapController {
 		//이거 프론트에 어케 전달할지몰르겟음
 		System.out.println("Date search started with date: ");
 		System.out.println(pathDate);
-		DayPlan dayPlanFound = day_repo.findByParentPlanPlanIdAndPlanDate(id, pathDate);
+		DayPlan dayPlanFound = dayPlanRepository.findByParentPlanPlanIdAndPlanDate(id, pathDate);
 		tripService.saveTimePlanToDayPlan(dayPlanFound, newTimePlan);
 		return dayPlanFound;
 	}
 
-	@PostMapping("/{timePlan_id}/time")
-	public void setTimePlan(@PathVariable int id, @RequestBody SetTimeDTO setTimeDTO) {
-		TimePlan timePlan = timePlanRepository.findById(id).get();
+	@PostMapping("/{timePlanId}/time")
+	public void setTimePlan(@PathVariable int timePlanId, @RequestBody SetTimeDTO setTimeDTO) {
+		TimePlan timePlan = timePlanRepository.findById(timePlanId).get();
 		timePlan.setTime(setTimeDTO.time);
 	}
 
 	@GetMapping("/route")
-	public Object getRoute(@RequestBody HashMap<String, Object> map) throws
+	public Object getRoute(@RequestBody HashMap<String, Object> hashMap) throws
 		IOException,
 		ParseException {
 		URL url = new URL("https://apis.openapi.sk.com/transit/routes?appKey=" + URLEncoder.encode(tmapKey, "UTF-8"));
@@ -148,9 +144,10 @@ public class MapController {
 
 		OutputStream outputStream = httpURLConnection.getOutputStream();
 		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, "UTF-8");
-		RouteRequestDTO routeRequestDTO = new RouteRequestDTO(map.get("startX").toString(),
-			map.get("startY").toString(), map.get("endX").toString(), map.get("endY").toString(), 5, 0, "json",
-			map.get("date").toString(), map.get("time").toString());
+		RouteRequestDTO routeRequestDTO = new RouteRequestDTO(hashMap.get("startX").toString(),
+			hashMap.get("startY").toString(), hashMap.get("endX").toString(), hashMap.get("endY").toString(), 5, 0,
+			"json",
+			hashMap.get("date").toString(), hashMap.get("time").toString());
 
 		ObjectMapper objectMapper = new ObjectMapper();
 		String routeRequestString = objectMapper.writeValueAsString(routeRequestDTO);
