@@ -126,4 +126,5 @@ public class TripService {
 			.author(author)
 			.build();
 	}
+
 }

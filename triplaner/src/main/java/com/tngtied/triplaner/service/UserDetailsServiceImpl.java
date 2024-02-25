@@ -2,9 +2,7 @@ package com.tngtied.triplaner.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -30,30 +28,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	private final UserRepository userRepository;
 	private final JwtTokenProvider jwtTokenProvider;
 	private final PasswordEncoder passwordEncoder;
-
-	public Member create(String userName, String email, String password) {
-		if (userRepository.findByUsername(userName).isPresent()) {
-			System.out.println(">>" + userRepository.findByUsername(userName).toString());
-			throw new DataIntegrityViolationException("USERNAME");
-		}
-		if (userRepository.findByEmail(email).isPresent()) {
-			throw new DataIntegrityViolationException("EMAIL");
-		}
-
-		Member siteUser = new Member(userName, passwordEncoder.encode(password), "USER", email);
-		this.userRepository.save(siteUser);
-		System.out.printf(">>user creation success with username [%s], email [%s], password [%s]\n",
-			siteUser.getUsername(), siteUser.getEmail(), password);
-		return siteUser;
-	}
+	private final MemberService memberService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		Optional<Member> user = this.userRepository.findByUsername(username);
-		if (user.isEmpty()) {
-			throw new UsernameNotFoundException(">> Username not found.");
-		}
-		Member siteUserFound = user.get();
+		Member siteUserFound = memberService.loadMemberByUsername(username);
 		List<GrantedAuthority> authorities = new ArrayList<>();
 
 		if ("admin".equals(siteUserFound.getUsername())) {
@@ -69,10 +48,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	public TokenInfo login(String username, String password) {
 		UserDetails user = this.loadUserByUsername(username);
-		if (user.equals(null)) {
-			System.out.println(">> User not Found");
-			throw new UsernameNotFoundException("유저가 존재하지 않습니다");
-		}
 
 		if (passwordEncoder.matches(password, user.getPassword())) {
 			return jwtTokenProvider.generateToken(user);
@@ -84,7 +59,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
 	public Member getUserFromAuthorization(String authorization) {
 		String username = jwtTokenProvider.getUsername(authorization.substring(7));
-		Member user = userRepository.findByUsername(username).get();
-		return user;
+		return memberService.loadMemberByUsername(username);
 	}
 }
