@@ -1,4 +1,4 @@
-package com.tngtied.triplaner.controller;
+package com.tngtied.triplaner.presentation.controller;
 
 import java.util.ArrayList;
 import java.util.regex.Pattern;
@@ -17,11 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.tngtied.triplaner.TokenInfo;
 import com.tngtied.triplaner.dto.UserLoginDTO;
 import com.tngtied.triplaner.dto.UserSignupDTO;
 import com.tngtied.triplaner.dto.UserValidationErrorDTO;
 import com.tngtied.triplaner.dto.UserValidationFieldError;
+import com.tngtied.triplaner.presentation.authentication.TokenInfo;
 import com.tngtied.triplaner.service.UserDetailsServiceImpl;
 
 import jakarta.validation.Valid;

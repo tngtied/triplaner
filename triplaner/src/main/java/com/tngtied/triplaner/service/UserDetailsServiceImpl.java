@@ -15,10 +15,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.tngtied.triplaner.JwtTokenProvider;
-import com.tngtied.triplaner.TokenInfo;
 import com.tngtied.triplaner.UserRole;
 import com.tngtied.triplaner.entity.Member;
+import com.tngtied.triplaner.presentation.authentication.JwtTokenProvider;
+import com.tngtied.triplaner.presentation.authentication.TokenInfo;
 import com.tngtied.triplaner.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -80,5 +80,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			System.out.println(">> Password Doesn't match");
 			throw new BadCredentialsException("패스워드가 일치하지 않습니다");
 		}
+	}
+
+	public Member getUserFromAuthorization(String authorization) {
+		String username = jwtTokenProvider.getUsername(authorization.substring(7));
+		Member user = userRepository.findByUsername(username).get();
+		return user;
 	}
 }

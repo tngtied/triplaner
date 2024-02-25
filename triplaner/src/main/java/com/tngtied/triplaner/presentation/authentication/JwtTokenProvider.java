@@ -1,4 +1,4 @@
-package com.tngtied.triplaner;
+package com.tngtied.triplaner.presentation.authentication;
 
 import java.security.Key;
 import java.sql.Date;

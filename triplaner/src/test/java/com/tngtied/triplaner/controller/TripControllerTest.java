@@ -24,18 +24,18 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.tngtied.triplaner.JwtTokenProvider;
-import com.tngtied.triplaner.TokenInfo;
 import com.tngtied.triplaner.UserRole;
 import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.entity.TimePlan;
+import com.tngtied.triplaner.presentation.authentication.JwtTokenProvider;
+import com.tngtied.triplaner.presentation.authentication.TokenInfo;
 import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.TripService;
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class MapControllerTest {
+class TripControllerTest {
 
 	private static final String base_mapping = "/api/v1/trip";
 

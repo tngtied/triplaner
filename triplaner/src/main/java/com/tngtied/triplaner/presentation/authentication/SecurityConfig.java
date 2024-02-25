@@ -1,4 +1,4 @@
-package com.tngtied.triplaner.Config;
+package com.tngtied.triplaner.presentation.authentication;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -11,9 +11,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.tngtied.triplaner.AuthenticationExceptionHandler;
-import com.tngtied.triplaner.CustomAccessDeniedHandler;
-import com.tngtied.triplaner.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 

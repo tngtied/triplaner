@@ -1,4 +1,4 @@
-package com.tngtied.triplaner.controller;
+package com.tngtied.triplaner.presentation.controller;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.Gson;
 import com.google.gson.stream.JsonReader;
-import com.tngtied.triplaner.JwtTokenProvider;
 import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.dto.NGeocodeDTO;
 import com.tngtied.triplaner.dto.NGeocodeWithErrDTO;
@@ -42,18 +41,20 @@ import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
+import com.tngtied.triplaner.presentation.authentication.JwtTokenProvider;
 import com.tngtied.triplaner.repository.DayPlanRepository;
 import com.tngtied.triplaner.repository.PlanRepository;
 import com.tngtied.triplaner.repository.TimePlanRepository;
 import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.TripService;
+import com.tngtied.triplaner.service.UserDetailsServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("${base.path}" + "/trip")
-public class MapController {
+public class TripController {
 
 	//private static final String base_mapping = "/api/v1/trip";
 
@@ -67,6 +68,7 @@ public class MapController {
 
 	private final JwtTokenProvider jwtTokenProvider;
 	private final TripService tripService;
+	private final UserDetailsServiceImpl userDetailsService;
 	private final UserRepository userRepository;
 
 	private final PlanRepository planRepository;
@@ -81,15 +83,14 @@ public class MapController {
 	}
 
 	@GetMapping("/list")
-	public List<TripThumbnailDTO> getTrips(@RequestHeader("Authorization") String authorization) {
+	public List<TripThumbnailDTO> getTripList(@RequestHeader("Authorization") String authorization) {
 		System.out.println(">> ${base.path}" + "/trips accessed");
-		Member user = userRepository.findByUsername(jwtTokenProvider.getUsername(authorization.substring(7))).get();
-		//        return plan_repo.findByAuthor_Username(user.getUsername());
+		Member user = userDetailsService.getUserFromAuthorization(authorization);
 		return planRepository.findThumbnails(user.getUsername());
 	}
 
 	@PostMapping()
-	public Plan initiateTrip(@RequestBody InitiateTripRequestDTO trip_dto) {
+	public Plan postTrip(@RequestBody InitiateTripRequestDTO trip_dto) {
 		Plan plan = new Plan();
 		plan.title = trip_dto.title;
 		plan.startDate = trip_dto.startDate;

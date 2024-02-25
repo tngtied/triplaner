@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Builder;
 
 @Entity
 @Table(name = "PLAN")
@@ -60,5 +61,13 @@ public class Plan {
 			", startDate: " + startDate +
 			", endDate: " + endDate +
 			"]";
+	}
+
+	@Builder
+	public Plan(String title, LocalDate startDate, LocalDate endDate, Member author) {
+		this.title = title;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.author = author;
 	}
 }
