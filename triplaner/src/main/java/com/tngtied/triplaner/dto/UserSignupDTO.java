@@ -19,11 +19,11 @@ public class UserSignupDTO {
 	@JsonProperty
 	@Column(unique = true, name = "USERNAME")
 	@NotNull
-	@Size(min = 2, max = 8)
+	@Size(min = 2, max = 20)
 	String username;
 
 	@JsonProperty
-	@Length(min = 8, max = 16)
+	@Length(min = 8, max = 20)
 	@NotNull
 	String password;
 

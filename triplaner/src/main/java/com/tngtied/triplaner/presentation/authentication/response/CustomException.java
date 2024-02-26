@@ -1,4 +1,4 @@
-package com.tngtied.triplaner.response;
+package com.tngtied.triplaner.presentation.authentication.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
