@@ -18,6 +18,7 @@ import org.apache.tomcat.util.json.JSONParser;
 import org.apache.tomcat.util.json.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -84,43 +85,34 @@ public class TripController {
 
 	@GetMapping("/list")
 	public List<TripThumbnailDTO> getTripList(@RequestHeader("Authorization") String authorization) {
-		System.out.println(">> ${base.path}" + "/trips accessed");
 		Member user = userDetailsService.getUserFromAuthorization(authorization);
 		return planRepository.findThumbnails(user.getUsername());
 	}
 
 	@PostMapping()
-	public Plan postTrip(@RequestBody InitiateTripRequestDTO trip_dto) {
-		Plan plan = new Plan();
-		plan.title = trip_dto.title;
-		plan.startDate = trip_dto.startDate;
-		plan.endDate = trip_dto.endDate;
-
-		planRepository.save(plan);
-		return (plan);
+	public Plan postTrip(@RequestHeader("Authorization") String authorization,
+		@RequestBody InitiateTripRequestDTO initiateTripRequestDTO) {
+		Member member = userDetailsService.getUserFromAuthorization(authorization);
+		return tripService.createPlan(initiateTripRequestDTO.title, initiateTripRequestDTO.startDate,
+			initiateTripRequestDTO.endDate, member);
 	}
 
 	@GetMapping("/{id}")
-	public Plan getPlan(@PathVariable int id) {
-		Plan plan = planRepository.findById(id).orElse(null);
-		if (plan == null) {
-			System.out.println("found plan was null");
-		} else {
-			System.out.println(plan);
-		}
-		return (plan);
+	public Plan getPlan(@RequestHeader("Authorization") String authorization, @PathVariable int id) {
+		Member member = userDetailsService.getUserFromAuthorization(authorization);
+		return tripService.loadValidatePlan(member, id);
 	}
 
-	@PutMapping("/{id}/{date}")
-	public DayPlan putTimePlan(@PathVariable long id, @PathVariable String date, @RequestBody TimePlan newTimePlan) {
+	@PutMapping("/{planId}/{date}")
+	public DayPlan putTimePlan(@PathVariable long planId,
+		@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") String date,
+		@RequestBody TimePlan newTimePlan) {
+
+		// TODO plan validation
 		LocalDate pathDate = LocalDate.parse(date);
-		if (pathDate == null) {
-			return null;
-		}
-		//이거 프론트에 어케 전달할지몰르겟음
 		System.out.println("Date search started with date: ");
 		System.out.println(pathDate);
-		DayPlan dayPlanFound = dayPlanRepository.findByParentPlanPlanIdAndPlanDate(id, pathDate);
+		DayPlan dayPlanFound = dayPlanRepository.findByParentPlanPlanIdAndPlanDate(planId, pathDate);
 		tripService.saveTimePlanToDayPlan(dayPlanFound, newTimePlan);
 		return dayPlanFound;
 	}

@@ -22,6 +22,7 @@ import com.tngtied.triplaner.dto.UserSignupDTO;
 import com.tngtied.triplaner.dto.UserValidationErrorDTO;
 import com.tngtied.triplaner.dto.UserValidationFieldError;
 import com.tngtied.triplaner.presentation.authentication.TokenInfo;
+import com.tngtied.triplaner.service.MemberService;
 import com.tngtied.triplaner.service.UserDetailsServiceImpl;
 
 import jakarta.validation.Valid;
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class UserController {
 
 	private final UserDetailsServiceImpl userService;
+	private final MemberService memberService;
 
 	@GetMapping("/signup")
 	public void signup() {
@@ -65,7 +67,7 @@ public class UserController {
 
 				System.out.printf(">>trying user creation with %s, %s, %s\n", siteUser.getUsername(),
 					siteUser.getEmail(), siteUser.getPassword());
-				userService.create(siteUser.getUsername(), siteUser.getEmail(), siteUser.getPassword());
+				memberService.create(siteUser.getUsername(), siteUser.getEmail(), siteUser.getPassword());
 			} catch (Exception e) {
 				System.out.println(">>caught exception");
 				userValidationErrorDTO.setHasErr(true);

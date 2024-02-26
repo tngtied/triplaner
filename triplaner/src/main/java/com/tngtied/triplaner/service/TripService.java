@@ -1,5 +1,7 @@
 package com.tngtied.triplaner.service;
 
+import static com.tngtied.triplaner.response.CustomErrorCode.*;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -22,6 +24,7 @@ import com.tngtied.triplaner.repository.PlaceRepository;
 import com.tngtied.triplaner.repository.PlanRepository;
 import com.tngtied.triplaner.repository.TimePlanRepository;
 import com.tngtied.triplaner.repository.UserRepository;
+import com.tngtied.triplaner.response.CustomException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -119,12 +122,22 @@ public class TripService {
 	}
 
 	public Plan createPlan(String title, LocalDate startDate, LocalDate endDate, Member author) {
-		return Plan.builder()
+		Plan plan = Plan.builder()
 			.title(title)
 			.startDate(startDate)
 			.endDate(endDate)
 			.author(author)
 			.build();
+		planRepository.save(plan);
+		return plan;
+	}
+
+	public Plan loadValidatePlan(Member member, int planId) {
+		Plan plan = planRepository.findById(planId).orElseThrow(() -> new CustomException(PLAN_NOT_FOUND));
+		if (!plan.author.getUserid().equals(member.getUserid())) {
+			throw new CustomException(AUTHOR_NOT_MATCH);
+		}
+		return plan;
 	}
 
 }
