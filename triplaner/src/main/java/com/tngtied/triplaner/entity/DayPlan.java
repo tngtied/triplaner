@@ -18,6 +18,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Builder;
 
 @Entity
 @Table(name = "DAYPLAN")
@@ -50,4 +51,10 @@ public class DayPlan {
 	@JsonProperty("Timeplan")
 	@JsonManagedReference
 	public Set<TimePlan> timeplan_list = new HashSet<>();
+
+	@Builder
+	public DayPlan(LocalDate planDate, Plan parentPlan) {
+		this.planDate = planDate;
+		this.parentPlan = parentPlan;
+	}
 }

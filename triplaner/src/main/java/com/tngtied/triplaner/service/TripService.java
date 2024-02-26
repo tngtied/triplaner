@@ -1,6 +1,6 @@
 package com.tngtied.triplaner.service;
 
-import static com.tngtied.triplaner.response.CustomErrorCode.*;
+import static com.tngtied.triplaner.presentation.authentication.response.CustomErrorCode.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,7 +8,6 @@ import java.io.InputStreamReader;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,12 +18,12 @@ import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
+import com.tngtied.triplaner.presentation.authentication.response.CustomException;
 import com.tngtied.triplaner.repository.DayPlanRepository;
 import com.tngtied.triplaner.repository.PlaceRepository;
 import com.tngtied.triplaner.repository.PlanRepository;
 import com.tngtied.triplaner.repository.TimePlanRepository;
 import com.tngtied.triplaner.repository.UserRepository;
-import com.tngtied.triplaner.response.CustomException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -51,7 +50,7 @@ public class TripService {
 
 	@Transactional
 	public void make_data() {
-		System.out.println("println: make_data invoked");
+		System.out.println(">> make_data invoked");
 		Member member = userRepository.findByUsername("username").get();
 
 		Plan plan1 = createPlan("kyungju"
@@ -59,29 +58,6 @@ public class TripService {
 			, LocalDate.of(2023, 9, 12)
 			, member);
 
-		ArrayList<DayPlan> dayplan_list = new ArrayList<>();
-		for (int i = 1; i < 3; i++) {
-			DayPlan dayplan = new DayPlan();
-			dayplan.setParent(plan1);
-			dayplan.planDate = LocalDate.of(2023, 9, i);
-
-			if (i == 1) {
-				for (int j = 1; j < 3; j++) {
-					TimePlan tp = makeTimeplan(j);
-					tp.parentPlan = dayplan;
-					timePlanRepository.save(tp);
-				}
-			}
-			dayPlanRepository.save(dayplan);
-
-			System.out.println("Dayplan saved as: ");
-			System.out.println(dayplan.planDate);
-
-			dayplan_list.add(dayplan);
-		}
-
-		plan1.dayplan_list = dayplan_list;
-		planRepository.save(plan1);
 		System.out.println(plan1);
 	}
 
@@ -108,7 +84,6 @@ public class TripService {
 		placeRepository.save(timePlan.place);
 		timePlan.parentPlan = dayPlan;
 		timePlanRepository.save(timePlan);
-		//date validation needed
 		dayPlan.timeplan_list.add(timePlan);
 		dayPlanRepository.save(dayPlan);
 	}
@@ -128,6 +103,14 @@ public class TripService {
 			.endDate(endDate)
 			.author(author)
 			.build();
+		for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
+			DayPlan dayPlan = DayPlan.builder()
+				.planDate(currentDate)
+				.parentPlan(plan)
+				.build();
+			dayPlanRepository.save(dayPlan);
+			plan.dayplan_list.add(dayPlan);
+		}
 		planRepository.save(plan);
 		return plan;
 	}
