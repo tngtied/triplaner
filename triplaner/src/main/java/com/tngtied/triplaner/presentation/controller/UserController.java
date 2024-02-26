@@ -21,6 +21,8 @@ import com.tngtied.triplaner.dto.UserSignupDTO;
 import com.tngtied.triplaner.dto.UserValidationErrorDTO;
 import com.tngtied.triplaner.dto.UserValidationFieldError;
 import com.tngtied.triplaner.presentation.authentication.jwt.TokenInfo;
+import com.tngtied.triplaner.presentation.authentication.response.CustomErrorCode;
+import com.tngtied.triplaner.presentation.authentication.response.CustomException;
 import com.tngtied.triplaner.service.MemberService;
 import com.tngtied.triplaner.service.UserDetailsServiceImpl;
 
@@ -52,6 +54,17 @@ public class UserController {
 			for (ObjectError err : bindingResult.getAllErrors()) {
 				if (err instanceof FieldError) {
 					FieldError fieldError = (FieldError)err;
+					if (fieldError.getField().equals("username")) {
+						if (fieldError.getCode().toString().equals("Size")) {
+							throw new CustomException(CustomErrorCode.INCORRECT_USERNAME_SIZE);
+						}
+					} else if (fieldError.getField().equals("password")) {
+						if (fieldError.getCode().toString().equals("Length")) {
+							throw new CustomException(CustomErrorCode.INCORRECT_PASSWORD_SIZE);
+						}
+					} else if (fieldError.getField().equals("email")) {
+						throw new CustomException(CustomErrorCode.EMAIL_PATTERN_NOT_MATCH);
+					}
 					userValidationErrorDTO.fieldErrorList.add(
 						new UserValidationFieldError(fieldError.getField(), fieldError.getCode().toString()));
 				} else {
@@ -75,12 +88,12 @@ public class UserController {
 
 				if (e.getClass().equals(DataIntegrityViolationException.class)) {
 					System.out.println(">>DataIntegrityViolationException");
-					//                    Matcher matcher = Pattern.compile("(^.*MEMBER\\()(\\w*)").matcher(e.getCause().toString());
-					//                    if (matcher.find()){
-					//                        userValidationErrorDTO.fieldErrorList.add(new UserValidationFieldError(matcher.group(2), "DUPLICATE"));
-					//                        System.out.printf(">>pattern found: %s\n", matcher.group(2));
-					//                        return userValidationErrorDTO;
-					//                    }
+					System.out.println(">> error message: " + e.getMessage());
+					if (e.getMessage().equals("USERNAME")) {
+						throw new CustomException(CustomErrorCode.DUPLICATE_USERNAME);
+					} else if (e.getMessage().equals("EMAIL")) {
+						throw new CustomException(CustomErrorCode.DUPLICATE_EMAIL);
+					}
 					userValidationErrorDTO.fieldErrorList.add(
 						new UserValidationFieldError(e.getMessage(), "DUPLICATE"));
 					return userValidationErrorDTO;

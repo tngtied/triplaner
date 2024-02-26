@@ -86,8 +86,12 @@ class UserControllerTest {
 	@DisplayName("Test: post signup invalid field [username field]")
 	void signupTestInvalidUsername() throws Exception {
 		String jsonString = "{\"username\": \"a\", \"password\": \"password\", \"email\":\"email@gmail.com\"}";
-		signupMvc(jsonString);
-
+		mockMvc.perform(post(base_path + "/user/signup")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andDo(print());
 		//response body
 		//{"hasErr":true,"fieldErrorList":[{"field":"username","error":"Size"}],"objectErrorList":[]}
 	}
@@ -96,27 +100,61 @@ class UserControllerTest {
 	@DisplayName("Test: post signup invalid field [password field]")
 	void signupTestInvalidPassword() throws Exception {
 		String jsonString = "{\"username\": \"username\", \"password\": \"pass\", \"email\":\"email@gmail.com\"}";
-		signupMvc(jsonString);
+		mockMvc.perform(post(base_path + "/user/signup")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andDo(print());
+	}
 
-		//response body
-		//{"hasErr":true,"fieldErrorList":[{"field":"password","error":"Size"}],"objectErrorList":[]}
+	@Test
+	@DisplayName("Test: post signup invalid field [password field]")
+	void signupTestInvalidEmail() throws Exception {
+		String jsonString = "{\"username\": \"username\", \"password\": \"password\", \"email\":\"email\"}";
+		mockMvc.perform(post(base_path + "/user/signup")
+				.content(jsonString)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andDo(print());
 	}
 
 	@Test
 	@DisplayName("Test: post signup duplicate field [username]")
 	void signupTestDuplicateUsername() throws Exception {
-		signupMvc(objectToJson(makeValidUser()));
-		signupMvc(objectToJson(makeValidUser()));
-		//        String jsonString = "{\"username\": \"test\", \"password\": \"password1\", \"email\":\"emailmail@gmail.com\"}";
-		//        signupMvc(jsonString);
+		String jsonContents = objectToJson(makeValidUser());
+		mockMvc.perform(post(base_path + "/user/signup")
+				.content(jsonContents)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andDo(print());
+		mockMvc.perform(post(base_path + "/user/signup")
+				.content(jsonContents)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andDo(print());
 	}
 
 	@Test
 	@DisplayName("Test: post signup duplicate field [email]")
 	void signupTestDuplicateEmail() throws Exception {
-		signupMvc(objectToJson(makeValidUser()));
-		String jsonString = "{\"username\": \"test1\", \"password\": \"password1\", \"email\":\"email@gmail.com\"}";
-		signupMvc(jsonString);
+		String jsonContentsA = objectToJson(makeValidUser());
+		mockMvc.perform(post(base_path + "/user/signup")
+				.content(jsonContentsA)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isOk())
+			.andDo(print());
+		String jsonContentsB = "{\"username\": \"test1\", \"password\": \"password1\", \"email\":\"email@gmail.com\"}";
+		mockMvc.perform(post(base_path + "/user/signup")
+				.content(jsonContentsB)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON))
+			.andExpect(status().isBadRequest())
+			.andDo(print());
 	}
 
 	@Test
