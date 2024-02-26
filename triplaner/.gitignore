@@ -19,6 +19,7 @@ bin/
 
 ### IntelliJ IDEA ###
 .idea
+.idea/sonarlint/
 *.iws
 *.iml
 *.ipr
@@ -35,6 +36,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
 
 ### API KEYS ###
 triplaner/src/main/resources/application-API-KEY.properties

@@ -42,7 +42,7 @@ import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
-import com.tngtied.triplaner.presentation.authentication.JwtTokenProvider;
+import com.tngtied.triplaner.presentation.authentication.jwt.JwtTokenProvider;
 import com.tngtied.triplaner.repository.DayPlanRepository;
 import com.tngtied.triplaner.repository.PlanRepository;
 import com.tngtied.triplaner.repository.TimePlanRepository;
@@ -97,24 +97,23 @@ public class TripController {
 			initiateTripRequestDTO.endDate, member);
 	}
 
-	@GetMapping("/{id}")
-	public Plan getPlan(@RequestHeader("Authorization") String authorization, @PathVariable int id) {
+	@GetMapping("/{planId}")
+	public Plan getPlan(@RequestHeader("Authorization") String authorization, @PathVariable int planId) {
 		Member member = userDetailsService.getUserFromAuthorization(authorization);
-		return tripService.loadValidatePlan(member, id);
+		return tripService.loadValidatePlan(member, planId);
 	}
 
 	@PutMapping("/{planId}/{date}")
-	public DayPlan putTimePlan(@PathVariable long planId,
+	public DayPlan putTimePlan(@RequestHeader("Authorization") String authorization, @PathVariable int planId,
 		@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") String date,
-		@RequestBody TimePlan newTimePlan) {
+		@RequestBody TimePlan timePlan) {
 
-		// TODO plan validation
+		Member member = userDetailsService.getUserFromAuthorization(authorization);
+		Plan plan = tripService.loadValidatePlan(member, planId);
 		LocalDate pathDate = LocalDate.parse(date);
-		System.out.println("Date search started with date: ");
-		System.out.println(pathDate);
-		DayPlan dayPlanFound = dayPlanRepository.findByParentPlanPlanIdAndPlanDate(planId, pathDate);
-		tripService.saveTimePlanToDayPlan(dayPlanFound, newTimePlan);
-		return dayPlanFound;
+		DayPlan dayPlan = dayPlanRepository.findByParentPlanAndPlanDate(plan, pathDate);
+		tripService.saveTimePlanToDayPlan(dayPlan, timePlan);
+		return dayPlan;
 	}
 
 	@PostMapping("/{timePlanId}/time")

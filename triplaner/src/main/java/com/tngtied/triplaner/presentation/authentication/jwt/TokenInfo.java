@@ -1,4 +1,4 @@
-package com.tngtied.triplaner.presentation.authentication;
+package com.tngtied.triplaner.presentation.authentication.jwt;
 
 import lombok.Builder;
 import lombok.Data;

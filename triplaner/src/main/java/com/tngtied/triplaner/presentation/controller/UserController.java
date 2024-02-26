@@ -21,7 +21,7 @@ import com.tngtied.triplaner.dto.UserLoginDTO;
 import com.tngtied.triplaner.dto.UserSignupDTO;
 import com.tngtied.triplaner.dto.UserValidationErrorDTO;
 import com.tngtied.triplaner.dto.UserValidationFieldError;
-import com.tngtied.triplaner.presentation.authentication.TokenInfo;
+import com.tngtied.triplaner.presentation.authentication.jwt.TokenInfo;
 import com.tngtied.triplaner.service.MemberService;
 import com.tngtied.triplaner.service.UserDetailsServiceImpl;
 

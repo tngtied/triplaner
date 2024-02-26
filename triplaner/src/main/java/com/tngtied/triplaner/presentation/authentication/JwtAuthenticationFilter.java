@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tngtied.triplaner.presentation.authentication.jwt.JwtTokenProvider;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

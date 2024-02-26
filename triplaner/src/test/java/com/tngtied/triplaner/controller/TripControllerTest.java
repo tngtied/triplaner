@@ -28,8 +28,8 @@ import com.tngtied.triplaner.UserRole;
 import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.entity.TimePlan;
-import com.tngtied.triplaner.presentation.authentication.JwtTokenProvider;
-import com.tngtied.triplaner.presentation.authentication.TokenInfo;
+import com.tngtied.triplaner.presentation.authentication.jwt.JwtTokenProvider;
+import com.tngtied.triplaner.presentation.authentication.jwt.TokenInfo;
 import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.TripService;
 
