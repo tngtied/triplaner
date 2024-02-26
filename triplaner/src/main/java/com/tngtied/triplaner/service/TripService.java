@@ -1,6 +1,6 @@
 package com.tngtied.triplaner.service;
 
-import static com.tngtied.triplaner.presentation.authentication.response.CustomErrorCode.*;
+import static com.tngtied.triplaner.response.CustomErrorCode.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -18,12 +18,12 @@ import com.tngtied.triplaner.entity.Member;
 import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
-import com.tngtied.triplaner.presentation.authentication.response.CustomException;
 import com.tngtied.triplaner.repository.DayPlanRepository;
 import com.tngtied.triplaner.repository.PlaceRepository;
 import com.tngtied.triplaner.repository.PlanRepository;
 import com.tngtied.triplaner.repository.TimePlanRepository;
 import com.tngtied.triplaner.repository.UserRepository;
+import com.tngtied.triplaner.response.CustomException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -103,6 +103,7 @@ public class TripService {
 			.endDate(endDate)
 			.author(author)
 			.build();
+		planRepository.save(plan);
 		for (LocalDate currentDate = startDate; !currentDate.isAfter(endDate); currentDate = currentDate.plusDays(1)) {
 			DayPlan dayPlan = DayPlan.builder()
 				.planDate(currentDate)
