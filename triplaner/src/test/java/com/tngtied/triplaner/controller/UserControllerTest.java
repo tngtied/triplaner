@@ -73,6 +73,7 @@ class UserControllerTest {
 	@DisplayName("Test: post signup valid")
 	void signupTestValid() throws Exception {
 		String siteUser = objectToJson(makeValidUser());
+		System.out.println(">> " + siteUser);
 		mockMvc.perform(post(base_path + "/user/signup")
 				.content(siteUser)
 				.contentType(MediaType.APPLICATION_JSON)

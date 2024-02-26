@@ -10,9 +10,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Data
 @Getter
+@RequiredArgsConstructor
 public class UserSignupDTO {
 	@JsonProperty
 	@Column(unique = true, name = "USERNAME")
