@@ -1,24 +1,17 @@
 package com.tngtied.triplaner.presentation.controller;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.rmi.UnexpectedException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.ws.rs.BadRequestException;
-
-import org.apache.tomcat.util.json.JSONParser;
-import org.apache.tomcat.util.json.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,19 +20,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
 import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
-import com.tngtied.triplaner.dto.NGeocodeDTO;
-import com.tngtied.triplaner.dto.NGeocodeWithErrDTO;
 import com.tngtied.triplaner.dto.RouteRequestDTO;
 import com.tngtied.triplaner.dto.SetTimeDTO;
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.entity.DayPlan;
 import com.tngtied.triplaner.entity.Member;
-import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
 import com.tngtied.triplaner.presentation.authentication.jwt.JwtTokenProvider;
@@ -71,6 +61,7 @@ public class TripController {
 	private final TripService tripService;
 	private final UserDetailsServiceImpl userDetailsService;
 	private final UserRepository userRepository;
+	private final ObjectMapper objectMapper;
 
 	private final PlanRepository planRepository;
 	private final DayPlanRepository dayPlanRepository;
@@ -123,53 +114,32 @@ public class TripController {
 	}
 
 	@GetMapping("/route")
-	public Object getRoute(@RequestBody HashMap<String, Object> hashMap) throws
-		IOException,
-		ParseException {
-		URL url = new URL("https://apis.openapi.sk.com/transit/routes?appKey=" + URLEncoder.encode(tmapKey, "UTF-8"));
-		HttpURLConnection httpURLConnection = (HttpURLConnection)url.openConnection();
-		httpURLConnection.setRequestMethod("POST");
-		httpURLConnection.setRequestProperty("accept", "application/json");
-		httpURLConnection.setRequestProperty("appKey", tmapKey);
-		httpURLConnection.setRequestProperty("content-type", "application/json");
-		httpURLConnection.setDoOutput(true);
+	public String getRoute(@RequestBody HashMap<String, Object> hashMap) throws
+		IOException, URISyntaxException {
+		URI uri = UriComponentsBuilder
+			.fromUriString("https://apis.openapi.sk.com")
+			.path("/transit/routes")
+			.queryParam("appKey", tmapKey)
+			.encode()
+			.build()
+			.toUri();
+		System.out.println(">> built URI");
 
-		OutputStream outputStream = httpURLConnection.getOutputStream();
-		OutputStreamWriter outputStreamWriter = new OutputStreamWriter(outputStream, "UTF-8");
 		RouteRequestDTO routeRequestDTO = new RouteRequestDTO(hashMap.get("startX").toString(),
 			hashMap.get("startY").toString(), hashMap.get("endX").toString(), hashMap.get("endY").toString(), 5, 0,
 			"json",
 			hashMap.get("date").toString(), hashMap.get("time").toString());
+		RequestEntity<RouteRequestDTO> requestEntity = RequestEntity.post(uri).body(routeRequestDTO);
 
-		ObjectMapper objectMapper = new ObjectMapper();
-		String routeRequestString = objectMapper.writeValueAsString(routeRequestDTO);
-		System.out.println(">> request json string: " + routeRequestString);
-		outputStreamWriter.write(routeRequestString);
-		outputStreamWriter.flush();
-		outputStreamWriter.close();
-		outputStream.close();
-
-		httpURLConnection.connect();
-
-		InputStreamReader inputStreamReader;
-		try {
-			inputStreamReader = new InputStreamReader(httpURLConnection.getInputStream(), "utf-8");
-			JSONParser jsonParser = new JSONParser(inputStreamReader);
-			return jsonParser.parse();
-		} catch (IOException | ParseException exception) {
-			inputStreamReader = new InputStreamReader(httpURLConnection.getErrorStream(), "utf-8");
-			// String errorMessage = tripService.readFromReader(inputStreamReader);
-			JSONParser jsonParser = new JSONParser(inputStreamReader);
-			Object jsonObject = jsonParser.parse();
-			return jsonObject;
-
-		}
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
+		return responseEntity.getBody();
 	}
 
 	@PostMapping("/geocode")
-	public Place addressToCoord(@RequestBody HashMap<String, Object> map) throws IOException {
-		URL url = new URL("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" + URLEncoder.encode(
-			map.get("address").toString(), "utf-8"));
+	public Place addressToCoord(@RequestBody HashMap<String, Object> map) throws IOException, URISyntaxException {
+		URI uri = new URI("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" +
+			map.get("address").toString());
 		System.out.println("url is: " + url.toString());
 		HttpURLConnection geoCon = (HttpURLConnection)url.openConnection();
 		geoCon.setRequestProperty("Content-Type", "application/json");
