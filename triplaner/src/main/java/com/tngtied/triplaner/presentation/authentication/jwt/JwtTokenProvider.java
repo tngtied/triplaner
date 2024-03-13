@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,6 +17,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+
+import com.tngtied.triplaner.repository.RefreshTokenRepository;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -31,6 +34,8 @@ import lombok.extern.slf4j.Slf4j;
 @Component
 public class JwtTokenProvider {
 	private final Key key;
+	@Autowired
+	RefreshTokenRepository refreshTokenRepository;
 
 	//    // 유저 정보를 가지고 AccessToken, RefreshToken 을 생성하는 메서드
 	public JwtTokenProvider(@Value("${jwt.secret.key}") String secretKey) {
@@ -54,6 +59,7 @@ public class JwtTokenProvider {
 			.setExpiration(Date.from(LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.ofHours(8))))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
+		refreshTokenRepository.save(new RefreshToken(String.valueOf(user.getUsername()), refreshToken, accessToken));
 
 		return TokenInfo.builder()
 			.grantType("Bearer")
