@@ -1,10 +1,11 @@
 package com.tngtied.triplaner.repository;
 
-import com.tngtied.triplaner.entity.TimePlan;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.tngtied.triplaner.entity.TimePlan;
+
 @Repository
-public interface TimePlanRepository extends CrudRepository<TimePlan, Integer> {
+public interface TimePlanRepository extends JpaRepository<TimePlan, Integer> {
 
 }

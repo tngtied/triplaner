@@ -2,14 +2,14 @@ package com.tngtied.triplaner.repository;
 
 import java.time.LocalDate;
 
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.tngtied.triplaner.entity.DayPlan;
 import com.tngtied.triplaner.entity.Plan;
 
 @Repository
-public interface DayPlanRepository extends CrudRepository<DayPlan, Integer> {
+public interface DayPlanRepository extends JpaRepository<DayPlan, Integer> {
 
 	//    String ByIdAndDate = "SELECT * " +
 	//            "FROM DayPlan d " +

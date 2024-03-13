@@ -52,7 +52,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		if (passwordEncoder.matches(password, user.getPassword())) {
 			return jwtTokenProvider.generateToken(user);
 		} else {
-			System.out.println(">> Password Doesn't match");
 			throw new BadCredentialsException("패스워드가 일치하지 않습니다");
 		}
 	}

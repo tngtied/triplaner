@@ -1,10 +1,11 @@
 package com.tngtied.triplaner.repository;
 
-import com.tngtied.triplaner.entity.Place;
-import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import com.tngtied.triplaner.entity.Place;
+
 @Repository
-public interface PlaceRepository extends CrudRepository<Place, Integer> {
+public interface PlaceRepository extends JpaRepository<Place, Integer> {
 
 }
