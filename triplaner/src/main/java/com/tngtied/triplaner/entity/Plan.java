@@ -19,11 +19,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
 @Table(name = "PLAN")
+@Getter
 public class Plan {
 	private static final String datePattern = "yyyy-MM-dd";
 	@Id

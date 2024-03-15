@@ -61,10 +61,10 @@ class TripControllerTest {
 		}
 	}
 
-	String getAccessToken() {
+	String getAccessToken(String username) {
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
-		Member member = new Member("username", "password", "USER", "email@gmail.com");
+		Member member = new Member(username, "password", "USER", "email@gmail.com");
 		userRepository.save(member);
 		TokenInfo tokenInfo = jwtTokenProvider.generateToken(member);
 		return tokenInfo.getAccessToken();
@@ -75,7 +75,7 @@ class TripControllerTest {
 	void planListPostTest() throws Exception {
 		InitiateTripRequestDTO dto1 = new InitiateTripRequestDTO("kyungju", LocalDate.of(2023, 9, 13),
 			LocalDate.of(2023, 9, 13));
-		String accessToken = getAccessToken();
+		String accessToken = getAccessToken("user1");
 		mockMvc.perform(post(base_mapping)
 				.header("Authorization", "Bearer " + accessToken)
 				.content(objectToJson(dto1))
@@ -88,8 +88,8 @@ class TripControllerTest {
 	@Test
 	@DisplayName("plan-list get test")
 	void planListGetTest() throws Exception {
-		String accessToken = getAccessToken();
-		tripService.make_data();
+		String accessToken = getAccessToken("user2");
+		tripService.make_data("user2");
 		mockMvc.perform(get(base_mapping + "/list")
 				.header("Authorization", "Bearer " + accessToken)
 			)
@@ -100,9 +100,9 @@ class TripControllerTest {
 	@Test
 	@DisplayName("plan get test using id")
 	void planGetTest() throws Exception {
-		String accessToken = getAccessToken();
-		tripService.make_data();
-		mockMvc.perform(get(base_mapping + "/1")
+		String accessToken = getAccessToken("user3");
+		Long planId = tripService.make_data("user3").getPlanId();
+		mockMvc.perform(get(base_mapping + "/" + planId)
 				.header("Authorization", "Bearer " + accessToken)
 			)
 			.andExpect(status().isOk())
@@ -111,12 +111,12 @@ class TripControllerTest {
 
 	@Test
 	void putTimePlanTest() throws Exception {
-		String accessToken = getAccessToken();
-		tripService.make_data();
-		TimePlan tp = tripService.makeTimeplan(3);
-		mockMvc.perform(put(base_mapping + "/1/2023-09-01")
+		String accessToken = getAccessToken("user4");
+		Long planId = tripService.make_data("user4").getPlanId();
+		TimePlan timePlan = tripService.makeTimeplan(3);
+		mockMvc.perform(put(base_mapping + "/" + planId + "/2023-09-01")
 				.header("Authorization", "Bearer " + accessToken)
-				.content(objectToJson(tp))
+				.content(objectToJson(timePlan))
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
 			.andExpect(status().isOk())
@@ -127,7 +127,7 @@ class TripControllerTest {
 	void addressToCoord() throws Exception {
 		JSONObject postContent = new JSONObject();
 		postContent.put("address", "서울특별시 서대문구 연세로 50");
-		String accessToken = getAccessToken();
+		String accessToken = getAccessToken("user5");
 		mockMvc.perform(post(base_mapping + "/geocode")
 				.header("Authorization", "Bearer " + accessToken)
 				.content(String.valueOf(postContent))
@@ -139,7 +139,7 @@ class TripControllerTest {
 
 	@Test
 	void getRouteTest() throws Exception {
-		String accessToken = getAccessToken();
+		String accessToken = getAccessToken("user6");
 
 		String routeRequestString = "{\"startX\": \"127.0315025\", \"startY\": \"37.4909898\", \"endX\":\"126.9390292\", \"endY\": \"37.5671131\", \"date\": \"2024-02-04\", \"time\":\"11:00\"}";
 		mockMvc.perform(get(base_mapping + "/route")

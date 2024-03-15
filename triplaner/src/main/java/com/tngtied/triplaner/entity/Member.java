@@ -52,7 +52,7 @@ public class Member implements UserDetails {
 
 	@NotNull
 	@Email
-	@Column(unique = true, name = "EMAIL")
+	@Column(name = "EMAIL")
 	private String email;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "author")

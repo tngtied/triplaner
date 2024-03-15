@@ -49,16 +49,16 @@ public class TripService {
 	}
 
 	@Transactional
-	public void make_data() {
+	public Plan make_data(String username) {
 		System.out.println(">> make_data invoked");
-		Member member = userRepository.findByUsername("username").get();
+		Member member = userRepository.findByUsername(username).get();
 
 		Plan plan1 = createPlan("kyungju"
 			, LocalDate.of(2023, 8, 13)
 			, LocalDate.of(2023, 9, 12)
 			, member);
 
-		System.out.println(plan1);
+		return plan1;
 	}
 
 	public String readFromReader(InputStreamReader r) throws IOException {
