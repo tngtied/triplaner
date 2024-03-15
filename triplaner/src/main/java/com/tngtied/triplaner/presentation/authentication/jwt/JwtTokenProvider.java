@@ -59,7 +59,7 @@ public class JwtTokenProvider {
 			.setExpiration(Date.from(LocalDateTime.now().plusHours(3).toInstant(ZoneOffset.ofHours(8))))
 			.signWith(key, SignatureAlgorithm.HS256)
 			.compact();
-		refreshTokenRepository.save(new RefreshToken(String.valueOf(user.getUsername()), refreshToken, accessToken));
+		// refreshTokenRepository.save(new RefreshToken(String.valueOf(user.getUsername()), refreshToken, accessToken));
 
 		return TokenInfo.builder()
 			.grantType("Bearer")

@@ -10,6 +10,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,11 +28,13 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
+import com.tngtied.triplaner.dto.NGeocodeDTO;
 import com.tngtied.triplaner.dto.RouteRequestDTO;
 import com.tngtied.triplaner.dto.SetTimeDTO;
 import com.tngtied.triplaner.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.entity.DayPlan;
 import com.tngtied.triplaner.entity.Member;
+import com.tngtied.triplaner.entity.Place;
 import com.tngtied.triplaner.entity.Plan;
 import com.tngtied.triplaner.entity.TimePlan;
 import com.tngtied.triplaner.presentation.authentication.jwt.JwtTokenProvider;
@@ -138,46 +143,23 @@ public class TripController {
 
 	@PostMapping("/geocode")
 	public Place addressToCoord(@RequestBody HashMap<String, Object> map) throws IOException, URISyntaxException {
-		URI uri = new URI("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode?query=" +
-			map.get("address").toString());
-		System.out.println("url is: " + url.toString());
-		HttpURLConnection geoCon = (HttpURLConnection)url.openConnection();
-		geoCon.setRequestProperty("Content-Type", "application/json");
-		geoCon.setRequestMethod("GET");
-		geoCon.setRequestProperty("X-NCP-APIGW-API-KEY-ID", naverClientId);
-		geoCon.setRequestProperty("X-NCP-APIGW-API-KEY", naverKey);
+		URI uri = UriComponentsBuilder
+			.fromUriString("https://naveropenapi.apigw.ntruss.com")
+			.path("/map-geocode/v2/geocode")
+			.queryParam("query", map.get("address").toString())
+			.encode()
+			.build()
+			.toUri();
+		HttpHeaders httpHeaders = new HttpHeaders();
+		httpHeaders.set("X-NCP-APIGW-API-KEY-ID", naverClientId);
+		httpHeaders.set("X-NCP-APIGW-API-KEY", naverKey);
 
-		geoCon.connect();
+		HttpEntity httpEntity = new HttpEntity(httpHeaders);
+		RestTemplate restTemplate = new RestTemplate();
+		ResponseEntity<NGeocodeDTO> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, httpEntity,
+			NGeocodeDTO.class);
+		return tripService.nGeoDTOToPlace(responseEntity.getBody());
 
-		var gson = new Gson();
-		InputStreamReader inputStreamReader;
-		int responseCode = geoCon.getResponseCode();
-		if (responseCode != 200) {
-			if (responseCode != 400 && responseCode != 500) {
-				inputStreamReader = new InputStreamReader(geoCon.getErrorStream(), "utf-8");
-				String errorMessage = tripService.readFromReader(inputStreamReader);
-				System.out.println(errorMessage);
-				if (responseCode == 400) {
-					throw new BadRequestException();
-				} else {
-					throw new UnexpectedException(errorMessage);
-				}
-			} else {
-				//response json from Naver geocode received
-				inputStreamReader = new InputStreamReader(geoCon.getInputStream(), "utf-8");
-				JsonReader jsonReader = new JsonReader(inputStreamReader);
-				jsonReader.setLenient(true);
-				NGeocodeWithErrDTO nGeocodeWithErrDTO = gson.fromJson(jsonReader, NGeocodeWithErrDTO.class);
-				throw new UnexpectedException(nGeocodeWithErrDTO.getErrorMessage());
-			}
-		} else {
-			inputStreamReader = new InputStreamReader(geoCon.getInputStream(), "utf-8");
-			JsonReader jsonReader = new JsonReader(inputStreamReader);
-			jsonReader.setLenient(true);
-			NGeocodeDTO nGeocodeDTO = gson.fromJson(jsonReader, NGeocodeDTO.class);
-			System.out.println(nGeocodeDTO.toString());
-			return (tripService.nGeoDTOToPlace(nGeocodeDTO));
-		}
 	}
 
 }

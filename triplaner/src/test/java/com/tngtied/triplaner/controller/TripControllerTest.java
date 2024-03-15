@@ -18,8 +18,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,8 +31,11 @@ import com.tngtied.triplaner.presentation.authentication.jwt.TokenInfo;
 import com.tngtied.triplaner.repository.UserRepository;
 import com.tngtied.triplaner.service.TripService;
 
+import lombok.RequiredArgsConstructor;
+
 @SpringBootTest
 @AutoConfigureMockMvc
+@RequiredArgsConstructor
 class TripControllerTest {
 
 	private static final String base_mapping = "/api/v1/trip";
@@ -63,10 +64,9 @@ class TripControllerTest {
 	String getAccessToken() {
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
-		UserDetails userDetails = new User("username", "password", authorities);
 		Member member = new Member("username", "password", "USER", "email@gmail.com");
 		userRepository.save(member);
-		TokenInfo tokenInfo = jwtTokenProvider.generateToken(userDetails);
+		TokenInfo tokenInfo = jwtTokenProvider.generateToken(member);
 		return tokenInfo.getAccessToken();
 	}
 

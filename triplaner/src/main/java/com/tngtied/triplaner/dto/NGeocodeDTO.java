@@ -1,30 +1,33 @@
 package com.tngtied.triplaner.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.lang.reflect.Array;
+import lombok.NoArgsConstructor;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class NGeocodeDTO {
-    String status;
-    String errorMessage;
+	String status;
+	String errorMessage;
 
+	static class metaDTO {
+		Number totalCount;
+		Number page;
+		Number count;
+	}
 
-    class metaDTO{
-        Number totalCount;
-        Number page;
-        Number count;
-    }
-    metaDTO meta;
+	metaDTO meta;
 
-    @Data
-    public class addressDTO {
-        String roadAddress;
-        String jibunAddress;
-        String englishAddress;
-        public String x;
-        public String y;
-        double distance;
-    }
-    addressDTO addresses[];
+	@Data
+	static public class addressDTO {
+		String roadAddress;
+		String jibunAddress;
+		String englishAddress;
+		public String x;
+		public String y;
+		double distance;
+	}
+
+	addressDTO addresses[];
 }
