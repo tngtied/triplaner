@@ -14,6 +14,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,6 +23,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "TIMEPLAN")
+@SequenceGenerator(sequenceName = "TIMEPLAN_SEQ", name = "TimeplanSeq", allocationSize = 50, initialValue = 1)
 public class TimePlan {
 	public TimePlan() {
 		this.place = new Place();
@@ -30,7 +32,7 @@ public class TimePlan {
 	@Id
 	@GeneratedValue
 	@Column(name = "TIMEPLAN_ID")
-	private Long timeplan_id;
+	private Long timeplanId;
 
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
 	@Column(name = "TIME")

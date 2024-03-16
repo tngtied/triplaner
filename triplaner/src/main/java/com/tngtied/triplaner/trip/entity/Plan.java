@@ -18,6 +18,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,6 +28,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "PLAN")
 @Getter
+@SequenceGenerator(sequenceName = "PLAN_SEQ", name = "PlanSeq", allocationSize = 50, initialValue = 1)
 public class Plan {
 	private static final String datePattern = "yyyy-MM-dd";
 	@Id
@@ -53,7 +55,7 @@ public class Plan {
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "parentPlan")
 	@JsonManagedReference
-	public List<DayPlan> dayplan_list;
+	public List<DayPlan> dayPlanList;
 
 	@Override
 	public String toString() {
@@ -71,6 +73,6 @@ public class Plan {
 		this.startDate = startDate;
 		this.endDate = endDate;
 		this.author = author;
-		this.dayplan_list = new ArrayList<>();
+		this.dayPlanList = new ArrayList<>();
 	}
 }

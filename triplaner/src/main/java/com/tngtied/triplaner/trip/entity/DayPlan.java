@@ -17,25 +17,27 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import lombok.Builder;
 
 @Entity
 @Table(name = "DAYPLAN")
+@SequenceGenerator(sequenceName = "DAYPLAN_SEQ", name = "DayplanSeq", allocationSize = 50, initialValue = 1)
 public class DayPlan {
 	private static final String datePattern = "yyyy-MM-dd";
 
 	public DayPlan() {
 	}
 
-	public void setParent(Plan parent_plan) {
-		this.parentPlan = parent_plan;
+	public void setParent(Plan parentPlan) {
+		this.parentPlan = parentPlan;
 	}
 
 	@Id
 	@GeneratedValue
 	@Column(name = "DAYPLAN_ID")
-	private Long dayplan_id;
+	private Long dayplanId;
 
 	@Column(name = "PLAN_DATE")
 	@JsonProperty("Date")
@@ -50,7 +52,7 @@ public class DayPlan {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "parentPlan")
 	@JsonProperty("Timeplan")
 	@JsonManagedReference
-	public Set<TimePlan> timeplan_list = new HashSet<>();
+	public Set<TimePlan> timeplanList = new HashSet<>();
 
 	@Builder
 	public DayPlan(LocalDate planDate, Plan parentPlan) {

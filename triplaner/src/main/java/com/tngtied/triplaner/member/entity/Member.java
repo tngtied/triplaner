@@ -19,6 +19,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -32,12 +33,13 @@ import lombok.Getter;
 @Table(name = "MEMBER")
 @Getter
 @AllArgsConstructor
+@SequenceGenerator(sequenceName = "MEMBER_SEQ", name = "memberSeq", allocationSize = 50, initialValue = 1)
 public class Member implements UserDetails {
 
 	@Id
 	@GeneratedValue
-	@Column(name = "USERID")
-	private Long userid;
+	@Column(name = "USER_ID")
+	private Long userId;
 
 	@Column(unique = true, name = "USERNAME")
 	@NotNull

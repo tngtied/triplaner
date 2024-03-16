@@ -83,7 +83,7 @@ public class TripService {
 		placeRepository.save(timePlan.place);
 		timePlan.parentPlan = dayPlan;
 		timePlanRepository.save(timePlan);
-		dayPlan.timeplan_list.add(timePlan);
+		dayPlan.timeplanList.add(timePlan);
 		dayPlanRepository.save(dayPlan);
 	}
 
@@ -109,7 +109,7 @@ public class TripService {
 				.parentPlan(plan)
 				.build();
 			dayPlanRepository.save(dayPlan);
-			plan.dayplan_list.add(dayPlan);
+			plan.dayPlanList.add(dayPlan);
 		}
 		planRepository.save(plan);
 		return plan;
@@ -117,7 +117,7 @@ public class TripService {
 
 	public Plan loadValidatePlan(Member member, int planId) {
 		Plan plan = planRepository.findById(planId).orElseThrow(() -> new TripException(TripErrorCode.PLAN_NOT_FOUND));
-		if (!plan.author.getUserid().equals(member.getUserid())) {
+		if (!plan.author.getUserId().equals(member.getUserId())) {
 			throw new TripException(TripErrorCode.AUTHOR_NOT_MATCH);
 		}
 		return plan;

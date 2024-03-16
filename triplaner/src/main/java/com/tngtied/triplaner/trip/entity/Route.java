@@ -1,4 +1,4 @@
-package com.tngtied.triplaner.entity;
+package com.tngtied.triplaner.trip.entity;
 
 import java.util.List;
 
