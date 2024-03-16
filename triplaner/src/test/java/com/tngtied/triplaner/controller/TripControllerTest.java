@@ -22,14 +22,14 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.tngtied.triplaner.UserRole;
-import com.tngtied.triplaner.dto.InitiateTripRequestDTO;
-import com.tngtied.triplaner.entity.Member;
-import com.tngtied.triplaner.entity.TimePlan;
-import com.tngtied.triplaner.presentation.authentication.jwt.JwtTokenProvider;
-import com.tngtied.triplaner.presentation.authentication.jwt.TokenInfo;
-import com.tngtied.triplaner.repository.UserRepository;
-import com.tngtied.triplaner.service.TripService;
+import com.tngtied.triplaner.member.entity.UserRole;
+import com.tngtied.triplaner.trip.dto.InitiateTripRequestDTO;
+import com.tngtied.triplaner.member.entity.Member;
+import com.tngtied.triplaner.trip.entity.TimePlan;
+import com.tngtied.triplaner.authentication.jwt.JwtTokenProvider;
+import com.tngtied.triplaner.authentication.jwt.TokenInfo;
+import com.tngtied.triplaner.member.repository.UserRepository;
+import com.tngtied.triplaner.trip.service.TripService;
 
 import lombok.RequiredArgsConstructor;
 

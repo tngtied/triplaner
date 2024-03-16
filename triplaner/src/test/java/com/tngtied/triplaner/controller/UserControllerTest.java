@@ -18,10 +18,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.tngtied.triplaner.dto.UserLoginDTO;
-import com.tngtied.triplaner.dto.UserSignupDTO;
-import com.tngtied.triplaner.repository.UserRepository;
-import com.tngtied.triplaner.service.UserDetailsServiceImpl;
+import com.tngtied.triplaner.member.dto.UserLoginDTO;
+import com.tngtied.triplaner.member.dto.UserSignupDTO;
+import com.tngtied.triplaner.member.repository.UserRepository;
+import com.tngtied.triplaner.member.service.UserDetailsServiceImpl;
 
 import jakarta.transaction.Transactional;
 
