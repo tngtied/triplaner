@@ -4,9 +4,12 @@ import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.tngtied.triplaner.member.service.UserDetailsServiceImpl;
+import com.tngtied.triplaner.trip.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.trip.dto.NGeocodeDTO;
 import com.tngtied.triplaner.trip.entity.DayPlan;
 import com.tngtied.triplaner.member.entity.Member;
@@ -34,6 +37,7 @@ public class TripService {
 	private final TimePlanRepository timePlanRepository;
 	private final PlaceRepository placeRepository;
 	private final UserRepository userRepository;
+	private final UserDetailsServiceImpl userDetailsService;
 
 	public TimePlan makeTimeplan(int j) {
 		TimePlan timePlan = new TimePlan();
@@ -93,12 +97,19 @@ public class TripService {
 		return plan;
 	}
 
-	public Plan loadValidatePlan(Member member, int planId) {
+	public Plan loadValidatePlan(String authorization, int planId) {
+		Member member = userDetailsService.getUserFromAuthorization(authorization);
 		Plan plan = planRepository.findById(planId).orElseThrow(() -> new TripException(TripErrorCode.PLAN_NOT_FOUND));
 		if (!plan.author.getUserId().equals(member.getUserId())) {
 			throw new TripException(TripErrorCode.AUTHOR_NOT_MATCH);
 		}
 		return plan;
+	}
+
+	public Plan initiateTrip(String authorization, InitiateTripRequestDTO initiateTripRequestDTO){
+		Member member = userDetailsService.getUserFromAuthorization(authorization);
+		return createPlan(initiateTripRequestDTO.title, initiateTripRequestDTO.startDate,
+			initiateTripRequestDTO.endDate, member);
 	}
 
 }

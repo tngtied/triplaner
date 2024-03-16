@@ -11,8 +11,10 @@ import com.tngtied.triplaner.member.entity.Member;
 import com.tngtied.triplaner.member.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class MemberService {
 	private final UserRepository userRepository;
@@ -20,7 +22,7 @@ public class MemberService {
 
 	public Member create(String userName, String email, String password) {
 		if (userRepository.findByUsername(userName).isPresent()) {
-			System.out.println(">>" + userRepository.findByUsername(userName).toString());
+			log.debug(">>" + userRepository.findByUsername(userName).toString());
 			throw new DataIntegrityViolationException("USERNAME");
 		}
 		if (userRepository.findByEmail(email).isPresent()) {
@@ -29,7 +31,7 @@ public class MemberService {
 
 		Member siteUser = new Member(userName, passwordEncoder.encode(password), "USER", email);
 		this.userRepository.save(siteUser);
-		System.out.printf(">>user creation success with username [%s], email [%s], password [%s]\n",
+		log.debug(">>user creation success with username [%s], email [%s], password [%s]\n",
 			siteUser.getUsername(), siteUser.getEmail(), password);
 		return siteUser;
 	}

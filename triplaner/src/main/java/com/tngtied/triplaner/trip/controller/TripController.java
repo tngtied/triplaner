@@ -88,24 +88,19 @@ public class TripController {
 	@PostMapping()
 	public Plan postTrip(@RequestHeader("Authorization") String authorization,
 		@RequestBody InitiateTripRequestDTO initiateTripRequestDTO) {
-		Member member = userDetailsService.getUserFromAuthorization(authorization);
-		return tripService.createPlan(initiateTripRequestDTO.title, initiateTripRequestDTO.startDate,
-			initiateTripRequestDTO.endDate, member);
+		return tripService.initiateTrip(authorization, initiateTripRequestDTO);
 	}
 
 	@GetMapping("/{planId}")
 	public Plan getPlan(@RequestHeader("Authorization") String authorization, @PathVariable int planId) {
-		Member member = userDetailsService.getUserFromAuthorization(authorization);
-		return tripService.loadValidatePlan(member, planId);
+		return tripService.loadValidatePlan(authorization, planId);
 	}
 
 	@PutMapping("/{planId}/{date}")
 	public DayPlan putTimePlan(@RequestHeader("Authorization") String authorization, @PathVariable int planId,
 		@PathVariable @DateTimeFormat(pattern = "yyyy-MM-dd") String date,
 		@RequestBody TimePlan timePlan) {
-
-		Member member = userDetailsService.getUserFromAuthorization(authorization);
-		Plan plan = tripService.loadValidatePlan(member, planId);
+		Plan plan = tripService.loadValidatePlan(authorization, planId);
 		LocalDate pathDate = LocalDate.parse(date);
 		DayPlan dayPlan = dayPlanRepository.findByParentPlanAndPlanDate(plan, pathDate);
 		tripService.saveTimePlanToDayPlan(dayPlan, timePlan);
