@@ -29,10 +29,12 @@ import com.tngtied.triplaner.member.service.UserDetailsServiceImpl;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("${base.path}" + "/user")
+@Slf4j
 public class UserController {
 
 	private final UserDetailsServiceImpl userService;
@@ -49,47 +51,45 @@ public class UserController {
 		userValidationErrorDTO.fieldErrorList = new ArrayList<UserValidationFieldError>();
 
 		if (bindingResult.hasErrors()) {
-			System.out.println(">>BindingResult has errors");
+			log.error(">>BindingResult has errors");
 			userValidationErrorDTO.setHasErr(true);
 
 			for (ObjectError err : bindingResult.getAllErrors()) {
 				if (err instanceof FieldError) {
 					FieldError fieldError = (FieldError)err;
 					if (fieldError.getField().equals("username")) {
-						if (fieldError.getCode().toString().equals("Size")) {
+						if (fieldError.getCode().equals("Size")) {
 							throw new UserException(UserErrorCode.INCORRECT_USERNAME_SIZE);
 						}
 					} else if (fieldError.getField().equals("password")) {
-						if (fieldError.getCode().toString().equals("Length")) {
+						if (fieldError.getCode().equals("Length")) {
 							throw new UserException(UserErrorCode.INCORRECT_PASSWORD_SIZE);
 						}
 					} else if (fieldError.getField().equals("email")) {
 						throw new UserException(UserErrorCode.EMAIL_PATTERN_NOT_MATCH);
 					}
 					userValidationErrorDTO.fieldErrorList.add(
-						new UserValidationFieldError(fieldError.getField(), fieldError.getCode().toString()));
+						new UserValidationFieldError(fieldError.getField(), fieldError.getCode()));
 				} else {
 					userValidationErrorDTO.objectErrorList.add(
 						Pattern.compile("(\\w*)$").matcher(err.getClass().toString()).group(1));
 				}
 			}
 		} else {
-			System.out.println(">>BindingResult has no error");
 			try {
-
-				System.out.printf(">>trying user creation with %s, %s, %s\n", siteUser.getUsername(),
+				log.debug(">>trying user creation with %s, %s, %s\n", siteUser.getUsername(),
 					siteUser.getEmail(), siteUser.getPassword());
 				memberService.create(siteUser.getUsername(), siteUser.getEmail(), siteUser.getPassword());
 			} catch (Exception e) {
-				System.out.println(">>caught exception");
+				log.error(">>caught exception");
 				userValidationErrorDTO.setHasErr(true);
-				System.out.printf(">>error class: %s\n", e.getClass().toString());
+				log.error(">>error class: %s\n", e.getClass().toString());
 
 				//regex pattern matching
 
 				if (e.getClass().equals(DataIntegrityViolationException.class)) {
-					System.out.println(">>DataIntegrityViolationException");
-					System.out.println(">> error message: " + e.getMessage());
+					log.error(">>DataIntegrityViolationException");
+					log.error(">> error message: " + e.getMessage());
 					if (e.getMessage().equals("USERNAME")) {
 						throw new UserException(UserErrorCode.DUPLICATE_USERNAME);
 					} else if (e.getMessage().equals("EMAIL")) {
@@ -99,7 +99,6 @@ public class UserController {
 						new UserValidationFieldError(e.getMessage(), "DUPLICATE"));
 					return userValidationErrorDTO;
 				}
-				System.out.println(">>objectErrorList");
 				userValidationErrorDTO.objectErrorList.add(
 					Pattern.compile("(\\w*)$").matcher(e.getClass().toString()).group(1));
 				return userValidationErrorDTO;
@@ -115,7 +114,7 @@ public class UserController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity PostLogin(@RequestBody UserLoginDTO userLoginDTO) {
+	public ResponseEntity postLogin(@RequestBody UserLoginDTO userLoginDTO) {
 		try {
 			TokenInfo tokenInfo = userService.login(userLoginDTO.getUsername(), userLoginDTO.getPassword());
 

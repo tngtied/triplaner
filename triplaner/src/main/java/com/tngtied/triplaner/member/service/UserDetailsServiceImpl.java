@@ -20,8 +20,10 @@ import com.tngtied.triplaner.authentication.jwt.TokenInfo;
 import com.tngtied.triplaner.member.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
@@ -40,7 +42,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		} else {
 			authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
 		}
-		System.out.println(">> loadUserByUsername() called, found successfully");
+		log.debug(">> loadUserByUsername() called, found successfully");
 
 		return new User(siteUserFound.getUsername(), siteUserFound.getPassword(), authorities);
 

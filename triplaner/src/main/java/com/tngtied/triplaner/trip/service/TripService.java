@@ -1,8 +1,5 @@
 package com.tngtied.triplaner.trip.service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -25,8 +22,10 @@ import com.tngtied.triplaner.trip.repository.TimePlanRepository;
 import com.tngtied.triplaner.member.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class TripService {
 
@@ -52,31 +51,10 @@ public class TripService {
 		System.out.println(">> make_data invoked");
 		Member member = userRepository.findByUsername(username).get();
 
-		Plan plan1 = createPlan("kyungju"
+		return createPlan("kyungju"
 			, LocalDate.of(2023, 8, 13)
 			, LocalDate.of(2023, 9, 12)
 			, member);
-
-		return plan1;
-	}
-
-	public String readFromReader(InputStreamReader r) throws IOException {
-		BufferedReader br = new BufferedReader(r);
-		String result = "";
-		try {
-			String inputLine;
-			StringBuffer response = new StringBuffer();
-			while ((inputLine = br.readLine()) != null) {
-				response.append(inputLine);
-			}
-			result = response.toString();
-		} catch (Exception e) {
-			System.out.println("error occured at readFromReader");
-			System.out.println(e);
-		} finally {
-			br.close();
-		}
-		return result;
 	}
 
 	public void saveTimePlanToDayPlan(DayPlan dayPlan, TimePlan timePlan) {

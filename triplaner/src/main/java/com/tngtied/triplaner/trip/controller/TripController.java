@@ -119,8 +119,7 @@ public class TripController {
 	}
 
 	@GetMapping("/route")
-	public String getRoute(@RequestBody HashMap<String, Object> hashMap) throws
-		IOException, URISyntaxException {
+	public String getRoute(@RequestBody HashMap<String, Object> hashMap)  {
 		URI uri = UriComponentsBuilder
 			.fromUriString("https://apis.openapi.sk.com")
 			.path("/transit/routes")
@@ -128,7 +127,6 @@ public class TripController {
 			.encode()
 			.build()
 			.toUri();
-		System.out.println(">> built URI");
 
 		RouteRequestDTO routeRequestDTO = new RouteRequestDTO(hashMap.get("startX").toString(),
 			hashMap.get("startY").toString(), hashMap.get("endX").toString(), hashMap.get("endY").toString(), 5, 0,

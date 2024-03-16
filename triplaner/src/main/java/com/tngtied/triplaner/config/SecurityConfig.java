@@ -15,9 +15,11 @@ import com.tngtied.triplaner.authentication.exception.CustomAccessDeniedHandler;
 import com.tngtied.triplaner.authentication.JwtAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @RequiredArgsConstructor
+@Slf4j
 public class SecurityConfig {
 
 	private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -29,7 +31,7 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain filterDefaultChain(HttpSecurity http) throws Exception {
-		System.out.println(">> filterDefaultChain activated");
+		log.debug(">> filterDefaultChain activated");
 		http.
 			securityMatcher("/api/v1/.*")
 			.authorizeHttpRequests(authorize -> authorize.anyRequest().authenticated());
