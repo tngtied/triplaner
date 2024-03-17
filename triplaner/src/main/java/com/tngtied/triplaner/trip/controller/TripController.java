@@ -26,24 +26,21 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tngtied.triplaner.member.entity.Member;
+import com.tngtied.triplaner.member.service.UserDetailsServiceImpl;
 import com.tngtied.triplaner.trip.dto.InitiateTripRequestDTO;
 import com.tngtied.triplaner.trip.dto.NGeocodeDTO;
 import com.tngtied.triplaner.trip.dto.RouteRequestDTO;
 import com.tngtied.triplaner.trip.dto.SetTimeDTO;
 import com.tngtied.triplaner.trip.dto.TripThumbnailDTO;
 import com.tngtied.triplaner.trip.entity.DayPlan;
-import com.tngtied.triplaner.member.entity.Member;
 import com.tngtied.triplaner.trip.entity.Place;
 import com.tngtied.triplaner.trip.entity.Plan;
 import com.tngtied.triplaner.trip.entity.TimePlan;
-import com.tngtied.triplaner.authentication.jwt.JwtTokenProvider;
 import com.tngtied.triplaner.trip.repository.DayPlanRepository;
 import com.tngtied.triplaner.trip.repository.PlanRepository;
 import com.tngtied.triplaner.trip.repository.TimePlanRepository;
-import com.tngtied.triplaner.member.repository.UserRepository;
 import com.tngtied.triplaner.trip.service.TripService;
-import com.tngtied.triplaner.member.service.UserDetailsServiceImpl;
 
 import lombok.RequiredArgsConstructor;
 
@@ -62,11 +59,9 @@ public class TripController {
 	@Value("${TMAP-KEY}")
 	private String tmapKey;
 
-	private final JwtTokenProvider jwtTokenProvider;
 	private final TripService tripService;
 	private final UserDetailsServiceImpl userDetailsService;
-	private final UserRepository userRepository;
-	private final ObjectMapper objectMapper;
+	private final RestTemplate restTemplate;
 
 	private final PlanRepository planRepository;
 	private final DayPlanRepository dayPlanRepository;
@@ -114,7 +109,7 @@ public class TripController {
 	}
 
 	@GetMapping("/route")
-	public String getRoute(@RequestBody HashMap<String, Object> hashMap)  {
+	public String getRoute(@RequestBody HashMap<String, Object> hashMap) {
 		URI uri = UriComponentsBuilder
 			.fromUriString("https://apis.openapi.sk.com")
 			.path("/transit/routes")
@@ -129,7 +124,6 @@ public class TripController {
 			hashMap.get("date").toString(), hashMap.get("time").toString());
 		RequestEntity<RouteRequestDTO> requestEntity = RequestEntity.post(uri).body(routeRequestDTO);
 
-		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<String> responseEntity = restTemplate.exchange(requestEntity, String.class);
 		return responseEntity.getBody();
 	}
@@ -148,7 +142,6 @@ public class TripController {
 		httpHeaders.set("X-NCP-APIGW-API-KEY", naverKey);
 
 		HttpEntity httpEntity = new HttpEntity(httpHeaders);
-		RestTemplate restTemplate = new RestTemplate();
 		ResponseEntity<NGeocodeDTO> responseEntity = restTemplate.exchange(uri, HttpMethod.GET, httpEntity,
 			NGeocodeDTO.class);
 		return tripService.nGeoDTOToPlace(responseEntity.getBody());
